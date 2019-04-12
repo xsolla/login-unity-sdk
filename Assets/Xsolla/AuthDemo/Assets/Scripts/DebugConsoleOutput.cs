@@ -1,5 +1,6 @@
 namespace Puzzly.Utils
 {
+
     using System;
     using System.Collections.Generic;
     using UnityEngine;
@@ -12,12 +13,14 @@ namespace Puzzly.Utils
         public bool showExceptionMessages = true;
 
 
+
         private class ListItem
         {
             public GUIContent Content { get; set; }
             public Rect Position { get; set; }
             public Color Color { get; set; }
         }
+
 
 
         private class LogItem
@@ -46,6 +49,7 @@ namespace Puzzly.Utils
         }
 
 
+
         private bool _isOpened = false;
 
         private Queue<LogItem> _addQueue = new Queue<LogItem>();
@@ -55,6 +59,9 @@ namespace Puzzly.Utils
         private bool _isMousePressed = false;
 
         private List<ListItem> _viewItems = new List<ListItem>();
+
+
+
 
 
         bool _updateLayout = false;
@@ -93,6 +100,7 @@ namespace Puzzly.Utils
 
                 UpdateLayout();
             }
+
 
 
             if (_isOpened)
@@ -170,6 +178,7 @@ namespace Puzzly.Utils
             }
 
 
+
             _scrollViewContainerRect = _containerRect;
             _scrollViewContainerRect.height -= buttonHeight + space;
 
@@ -181,10 +190,12 @@ namespace Puzzly.Utils
             _scrollViewRect.height -= border * 2;
 
 
-            _showHideButtonRect = new Rect(20, 20, buttonWidth, buttonHeight);
+
+            _showHideButtonRect = new Rect(20,20, buttonWidth, buttonHeight);
 
             _scrollToEndButtonRect = _showHideButtonRect;
             _scrollToEndButtonRect.x += _scrollToEndButtonRect.width + space;
+
 
 
             float scrollBarWidth = GUI.skin.verticalScrollbar.fixedWidth + 1;
@@ -194,10 +205,12 @@ namespace Puzzly.Utils
             _itemsViewRect = new Rect(0, 0, _visibleAreaRect.width, 0);
 
 
+
             UpdateItemsGeometryInternal();
 
             MarkVisibleItemsAsChanged();
         }
+
 
 
         private void UpdateItemsGeometryInternal()
@@ -218,6 +231,11 @@ namespace Puzzly.Utils
 
             MarkVisibleItemsAsChanged();
         }
+
+
+
+
+
 
 
         private int FindVisibleItemIndex()
@@ -261,6 +279,9 @@ namespace Puzzly.Utils
 
             return -1;
         }
+
+
+
 
 
         private bool _isVisibleItemsChanged = false;
@@ -337,6 +358,7 @@ namespace Puzzly.Utils
                 //UnityDebug.Log("from {0} to {1} (count = {2})", first, last, _list.Count);
                 for (int i = first; i <= last; i++)
                     items.Add(_viewItems[i]);
+
             }
             else
             {
@@ -345,6 +367,8 @@ namespace Puzzly.Utils
 
             return items;
         }
+
+
 
 
         bool IsEndOfList()
@@ -361,6 +385,8 @@ namespace Puzzly.Utils
                 MarkVisibleItemsAsChanged();
             }
         }
+
+
 
 
         void AddToEndOfList(LogItem item)
@@ -404,6 +430,7 @@ namespace Puzzly.Utils
             _viewItems.Add(listItem);
 
 
+
             var scrollToEnd = IsEndOfList();
 
             _itemsViewRect.height += listItem.Position.height;
@@ -427,8 +454,9 @@ namespace Puzzly.Utils
         }
 
 
-        private GUIStyle _generalItemStyle;
 
+
+        private GUIStyle _generalItemStyle;
         protected GUIStyle GeneralItemStyle
         {
             get
@@ -442,6 +470,7 @@ namespace Puzzly.Utils
                 return _generalItemStyle;
             }
         }
+
 
 
         private Dictionary<Color, GUIStyle> _itemStylesCache = new Dictionary<Color, GUIStyle>();
@@ -474,6 +503,8 @@ namespace Puzzly.Utils
 
             return style;
         }
+
+
 
 
         void OnGUI()
@@ -515,18 +546,10 @@ namespace Puzzly.Utils
         {
             switch (type)
             {
-                case LogType.Log:
-                    if (!showLogMessages) return;
-                    break;
-                case LogType.Warning:
-                    if (!showWarningMessages) return;
-                    break;
-                case LogType.Error:
-                    if (!showErrorMessages) return;
-                    break;
-                case LogType.Exception:
-                    if (!showExceptionMessages) return;
-                    break;
+                case LogType.Log: if (!showLogMessages) return; break;
+                case LogType.Warning: if (!showWarningMessages) return; break;
+                case LogType.Error: if (!showErrorMessages) return; break;
+                case LogType.Exception: if (!showExceptionMessages) return; break;
                 default: return;
             }
 

@@ -15,10 +15,9 @@ public class AuthController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log(Application.unityVersion);
         if (XsollaAuthentication.Instance.IsTokenValid)
         {
-            Debug.Log($"Your token {XsollaAuthentication.Instance.Token} is active");
+            Debug.Log("Your token "+XsollaAuthentication.Instance.Token+" is active");
             SceneManager.LoadScene("Game");
         }
         else
@@ -38,24 +37,23 @@ public class AuthController : MonoBehaviour
 
     private void OnIdentifiedError(ErrorDescription obj)
     {
-        Debug.Log($"Identified error: {obj.code}, {obj.description}.");
+        Debug.Log("Identified error: "+obj.code+", "+obj.description+".");
     }
 
     private void OnSubmittedLoginUrlNotFoundException(ErrorDescription obj)
     {
-        Debug.Log($"SubmittedLoginUrlNotFoundException: {obj.code}, {obj.description}.");
+        Debug.Log("SubmittedLoginUrlNotFoundException: "+obj.code+", "+obj.description+".");
     }
 
     private void OnMultipleLoginUrlsException(ErrorDescription obj)
     {
-        Debug.Log($"OnMultipleLoginUrlsException: {obj.code}, {obj.description}.");
+        Debug.Log("OnMultipleLoginUrlsException: "+obj.code+", "+obj.description+".");
     }
 
     private void OnInvalidProjectSettings(ErrorDescription obj)
     {
-        Debug.Log($"OnInvalidProjectSettings: {obj.code}, {obj.description}.");
+        Debug.Log("OnInvalidProjectSettings: "+obj.code+", "+obj.description+".");
     }
-
     private void OnDestroy()
     {
         XsollaAuthentication.Instance.OnInvalidProjectSettings -= OnInvalidProjectSettings;
@@ -64,7 +62,6 @@ public class AuthController : MonoBehaviour
         XsollaAuthentication.Instance.OnIdentifiedError -= OnIdentifiedError;
         XsollaAuthentication.Instance.OnNetworkError -= OnNetworkError;
     }
-
     private void Awake()
     {
         _changePassword_Panel.GetComponent<IPage>().Close();

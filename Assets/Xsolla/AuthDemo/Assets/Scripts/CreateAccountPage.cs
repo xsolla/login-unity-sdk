@@ -7,8 +7,7 @@ public interface ICreateAccount
 {
     void CreateAccount();
 }
-
-public class CreateAccountPage : Page, ICreateAccount
+public class CreateAccountPage :  Page, ICreateAccount
 {
     [SerializeField] InputField _login_Text;
     [SerializeField] InputField _password_Text;
@@ -21,7 +20,6 @@ public class CreateAccountPage : Page, ICreateAccount
         _close_Btn.onClick.AddListener(Close);
         _create_Btn.onClick.AddListener(CreateAccount);
     }
-
     private void Start()
     {
         XsollaAuthentication.Instance.OnSuccesfulRegistration += OnSuccesfulRegistration;
@@ -47,9 +45,8 @@ public class CreateAccountPage : Page, ICreateAccount
 
     private void OnRegistrationNotAllowed(ErrorDescription error)
     {
-        Debug.Log($"Password Registration Not Allowed {error.code}, {error.description}");
+        Debug.Log("Password Registration Not Allowed "+error.code+", "+error.description);
     }
-
     private void OnDestroy()
     {
         XsollaAuthentication.Instance.OnSuccesfulRegistration -= OnSuccesfulRegistration;
@@ -57,7 +54,6 @@ public class CreateAccountPage : Page, ICreateAccount
         XsollaAuthentication.Instance.OnUsernameIsTaken -= OnUsernameIsTaken;
         XsollaAuthentication.Instance.OnEmailIsTaken -= OnEmailIsTaken;
     }
-
     public void CreateAccount()
     {
         if (_login_Text.text != "" && _password_Text.text != "" && _email_Text.text != "")

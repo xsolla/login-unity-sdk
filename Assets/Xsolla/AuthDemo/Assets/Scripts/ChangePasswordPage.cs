@@ -7,7 +7,6 @@ public interface IChangePassword
 {
     void ChangePassword();
 }
-
 public class ChangePasswordPage : Page, IChangePassword
 {
     [SerializeField] InputField _login_Text;
@@ -19,7 +18,6 @@ public class ChangePasswordPage : Page, IChangePassword
         _close_Btn.onClick.AddListener(Close);
         _change_Btn.onClick.AddListener(ChangePassword);
     }
-
     private void Start()
     {
         XsollaAuthentication.Instance.OnSuccesfulResetPassword += OnSuccesfullResetPassword;
@@ -28,20 +26,18 @@ public class ChangePasswordPage : Page, IChangePassword
 
     private void OnPassworResetingNotAllowedForProject(ErrorDescription error)
     {
-        Debug.Log($"Passwor Reseting Not Allowed For Project {error.code}, {error.description}");
+        Debug.Log("Passwor Reseting Not Allowed For Project "+error.code+", "+error.description);
     }
 
     private void OnSuccesfullResetPassword()
     {
         Debug.Log("Successfull reseted password");
     }
-
     private void OnDestroy()
     {
         XsollaAuthentication.Instance.OnSuccesfulResetPassword -= OnSuccesfullResetPassword;
         XsollaAuthentication.Instance.OnPassworResetingNotAllowedForProject -= OnPassworResetingNotAllowedForProject;
     }
-
     public void ChangePassword()
     {
         if (_login_Text.text != "")

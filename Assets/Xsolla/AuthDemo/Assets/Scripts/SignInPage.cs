@@ -8,7 +8,6 @@ public interface ISignIn
 {
     void SignIn();
 }
-
 public class SignInPage : Page, ISignIn
 {
     [SerializeField] InputField _login_Text;
@@ -19,6 +18,7 @@ public class SignInPage : Page, ISignIn
     {
         _signIn_Btn.onClick.AddListener(SignIn);
     }
+
 
     private void Start()
     {
@@ -59,7 +59,7 @@ public class SignInPage : Page, ISignIn
     {
         if (XsollaAuthentication.Instance.IsTokenValid)
         {
-            Debug.Log($"Your token {XsollaAuthentication.Instance.Token} is active");
+            Debug.Log("Your token "+XsollaAuthentication.Instance.Token+" is active");
             SceneManager.LoadScene("Game");
         }
     }
@@ -73,7 +73,6 @@ public class SignInPage : Page, ISignIn
         else
             Debug.Log("Fill all fields");
     }
-
     void OnDestroy()
     {
         XsollaAuthentication.Instance.OnSuccesfulSignIn -= OnSignIn;
