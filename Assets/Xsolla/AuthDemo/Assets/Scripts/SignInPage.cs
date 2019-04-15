@@ -17,6 +17,8 @@ public class SignInPage : Page, ISignIn
     private void Awake()
     {
         _signIn_Btn.onClick.AddListener(SignIn);
+        _login_Text.text = XsollaAuthentication.Instance.LastUserLogin;
+        _password_Text.text = XsollaAuthentication.Instance.LastUserPassword;
     }
 
 
@@ -57,9 +59,14 @@ public class SignInPage : Page, ISignIn
 
     private void OnSignIn(XsollaUser user)
     {
-        if (XsollaAuthentication.Instance.IsTokenValid)
+        if (XsollaAuthentication.Instance.IsTokenValid && XsollaAuthentication.Instance.IsCheckToken)
         {
-            Debug.Log("Your token "+XsollaAuthentication.Instance.Token+" is active");
+            Debug.Log("Your token " + XsollaAuthentication.Instance.Token + " is active");
+            SceneManager.LoadScene("Game");
+        }
+        else if (!XsollaAuthentication.Instance.IsCheckToken)
+        {
+            Debug.Log("Unsafe signed in");
             SceneManager.LoadScene("Game");
         }
     }
@@ -68,7 +75,7 @@ public class SignInPage : Page, ISignIn
     {
         if (_login_Text.text != "" && _password_Text.text != null)
         {
-            XsollaAuthentication.Instance.SignIn(_login_Text.text, _password_Text.text);
+            XsollaAuthentication.Instance.SignIn(_login_Text.text, _password_Text.text, true);
         }
         else
             Debug.Log("Fill all fields");

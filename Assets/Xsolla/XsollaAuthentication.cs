@@ -3,12 +3,15 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Security;
+using System.Text;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace Xsolla
 {
     public class XsollaAuthentication : MonoBehaviour
     {
-
         #region SuccessEvents
         public event Action OnSuccesfulRegistration;
         public event Action<XsollaUser> OnSuccesfulSignIn;
@@ -115,8 +118,40 @@ namespace Xsolla
             }
         }
 
+        public bool IsCheckToken
+        {
+            get
+            {
+                return _checkToken;
+            }
+
+            set
+            {
+                _checkToken = value;
+            }
+        }
+        public string LastUserLogin
+        {
+            get
+            {
+                return PlayerPrefs.HasKey("Xsolla_User_Login") && (_projectId != null && _projectId.Length > 0) 
+                    ? PlayerPrefs.GetString("Xsolla_User_Login") 
+                    : "";
+            }
+        }
+        public string LastUserPassword
+        {
+            get
+            {
+                return PlayerPrefs.HasKey("Xsolla_User_Password") && (_projectId != null && _projectId.Length > 0) 
+                    ? Crypto.Decrypt(Encoding.ASCII.GetBytes(ProjectId.Replace("-", "").Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password")) 
+                    : "";
+            }
+        }
         [SerializeField]
         private string _projectId;
+        [SerializeField]
+        private bool _checkToken;
         [SerializeField]
         private string _validationJWTTokenURL;
         [SerializeField]
@@ -136,6 +171,7 @@ namespace Xsolla
             }
             DontDestroyOnLoad(gameObject);
         }
+
         /// <summary>
         /// Clear Token 
         /// </summary>
@@ -167,7 +203,7 @@ namespace Xsolla
         /// <summary>
         /// Login
         /// </summary>
-        public void SignIn(string username, string password)
+        public void SignIn(string username, string password, bool remember_user)
         {
             WWWForm form = new WWWForm();
             form.AddField("username", username);
@@ -177,9 +213,27 @@ namespace Xsolla
                 (status, message) =>
                 {
                     if (!CheckForErrors(status, message, CheckSignInError))
-                        CheckToken(message);
+                    {
+                        if (_checkToken)
+                            CheckToken(message, () => { if (remember_user) SaveLoginPassword(username, password); });
+                        else if (OnSuccesfulSignIn != null)
+                        {
+                            OnSuccesfulSignIn.Invoke(new XsollaUser());
+                            if (remember_user)
+                                SaveLoginPassword(username, password);
+                        }
+                    }
                 }
                 ));
+        }
+
+        private void SaveLoginPassword(string username, string password)
+        {
+            if (_projectId != null && _projectId.Length > 0)
+            {
+                PlayerPrefs.SetString("Xsolla_User_Login", username);
+                PlayerPrefs.SetString("Xsolla_User_Password", Crypto.Encrypt(Encoding.ASCII.GetBytes(ProjectId.Replace("-", "").Substring(0, 16)), password));
+            }
         }
 
         /// <summary>
@@ -198,17 +252,6 @@ namespace Xsolla
                     if (!CheckForErrors(status, message, CheckRegistrationError) && OnSuccesfulRegistration != null)
                         OnSuccesfulRegistration.Invoke();
                 }));
-        }
-
-        private SocialServices ParceSocial(string message)
-        {
-            SocialServices social = new SocialServices();
-            try
-            {
-                social = JsonUtility.FromJson<SocialServices>(message);
-            }
-            catch (Exception) { }
-            return social;
         }
 
         #region Exceptions
@@ -386,7 +429,7 @@ namespace Xsolla
                 PlayerPrefs.SetString("Xsolla_Token", token);
                 return token;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 if (OnInvalidToken != null)
                     OnInvalidToken.Invoke();
@@ -429,7 +472,7 @@ namespace Xsolla
         {
             UnityWebRequest request = UnityWebRequest.Post(url, form);
 
-#if UNITY_2018_OR_NEWER
+#if UNITY_2018_1_OR_NEWER
             request.SendWebRequest();
 #else
             request.Send();
@@ -453,13 +496,11 @@ namespace Xsolla
         {
             UnityWebRequest request = UnityWebRequest.Get(uri);
 
-#if UNITY_2018_OR_NEWER
+#if UNITY_2018_1_OR_NEWER
             request.SendWebRequest();
 #else
             request.Send();
 #endif
-
-
             while (!request.isDone)
             {
                 //wait 
@@ -474,42 +515,9 @@ namespace Xsolla
                 callback.Invoke(true, request.downloadHandler.text);
             }
         }
-#endregion
     }
-    public enum Social
-    {
-        amazon,
-        baidu,
-        battlenet,
-        china_telecom,
-        discord,
-        facebook,
-        github,
-        google,
-        instagram,
-        kakao,
-        linkedin,
-        mailru,
-        microsoft,
-        msn,
-        naver,
-        odnoklassniki,
-        paypal,
-        pinterest,
-        qq,
-        reddit,
-        steam,
-        twitchtv,
-        twitter,
-        vimeo,
-        vk,
-        wechat,
-        weibo,
-        yahoo,
-        yandex,
-        youtube
-    }
-#region JsonClasses
+    #endregion
+    #region JsonClasses
     [Serializable]
     public struct XsollaUser
     {
@@ -547,39 +555,69 @@ namespace Xsolla
     {
         public XsollaUser token_payload;
     }
-    [Serializable]
-    public class SocialServices
+    #endregion
+    class Crypto
     {
-        public string amazon;
-        public string baidu;
-        public string battlenet;
-        public string china_telecom;
-        public string discord;
-        public string facebook;
-        public string github;
-        public string google;
-        public string instagram;
-        public string kakao;
-        public string linkedin;
-        public string mailru;
-        public string microsoft;
-        public string msn;
-        public string naver;
-        public string odnoklassniki;
-        public string paypal;
-        public string pinterest;
-        public string qq;
-        public string reddit;
-        public string steam;
-        public string twitchtv;
-        public string twitter;
-        public string vimeo;
-        public string vk;
-        public string wechat;
-        public string weibo;
-        public string yahoo;
-        public string yandex;
-        public string youtube;
+        public static string Encrypt(byte[] key, string dataToEncrypt)
+        {
+            try
+            {
+                // Initialize
+                AesManaged encryptor = new AesManaged();
+                // Set the key
+                encryptor.Key = key;
+                encryptor.IV = key;
+                // create a memory stream
+                using (MemoryStream encryptionStream = new MemoryStream())
+                {
+                    // Create the crypto stream
+                    using (CryptoStream encrypt = new CryptoStream(encryptionStream, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        // Encrypt
+                        byte[] utfD1 = UTF8Encoding.UTF8.GetBytes(dataToEncrypt);
+                        encrypt.Write(utfD1, 0, utfD1.Length);
+                        encrypt.FlushFinalBlock();
+                        encrypt.Close();
+                        // Return the encrypted data
+                        return Convert.ToBase64String(encryptionStream.ToArray());
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+        public static string Decrypt(byte[] key, string encryptedString)
+        {
+            try
+            {
+                // Initialize
+                AesManaged decryptor = new AesManaged();
+                byte[] encryptedData = Convert.FromBase64String(encryptedString);
+                // Set the key
+                decryptor.Key = key;
+                decryptor.IV = key;
+                // create a memory stream
+                using (MemoryStream decryptionStream = new MemoryStream())
+                {
+                    // Create the crypto stream
+                    using (CryptoStream decrypt = new CryptoStream(decryptionStream, decryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        // Encrypt
+                        decrypt.Write(encryptedData, 0, encryptedData.Length);
+                        decrypt.Flush();
+                        decrypt.Close();
+                        // Return the unencrypted data
+                        byte[] decryptedData = decryptionStream.ToArray();
+                        return UTF8Encoding.UTF8.GetString(decryptedData, 0, decryptedData.Length);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
     }
-#endregion
 }
