@@ -59,12 +59,12 @@ public class SignInPage : Page, ISignIn
 
     private void OnSignIn(XsollaUser user)
     {
-        if (XsollaAuthentication.Instance.IsTokenValid && XsollaAuthentication.Instance.IsCheckToken)
+        if (XsollaAuthentication.Instance.IsTokenValid && XsollaAuthentication.Instance.IsJWTvalidationToken)
         {
             Debug.Log("Your token " + XsollaAuthentication.Instance.Token + " is active");
             SceneManager.LoadScene("Game");
         }
-        else if (!XsollaAuthentication.Instance.IsCheckToken)
+        else if (!XsollaAuthentication.Instance.IsJWTvalidationToken)
         {
             Debug.Log("Unsafe signed in");
             SceneManager.LoadScene("Game");
