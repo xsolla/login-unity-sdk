@@ -208,7 +208,7 @@ namespace Xsolla
             WWWForm form = new WWWForm();
             form.AddField("username", username);
             form.AddField("password", password);
-            form.AddField("remember_me", "true");
+            form.AddField("remember_me", remember_user.ToString());
             StartCoroutine(PostRequest("https://login.xsolla.com/api/login?projectId="+_loginProjectId+"&login_url="+_callbackUrl+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, form,
                 (status, message) =>
                 {

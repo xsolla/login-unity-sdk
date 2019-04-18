@@ -13,6 +13,7 @@ public class SignInPage : Page, ISignIn
     [SerializeField] InputField _login_Text;
     [SerializeField] InputField _password_Text;
     [SerializeField] Button _signIn_Btn;
+    [SerializeField] Toggle _saveMe_ChkBox;
 
     private void Awake()
     {
@@ -75,7 +76,7 @@ public class SignInPage : Page, ISignIn
     {
         if (_login_Text.text != "" && _password_Text.text != null)
         {
-            XsollaAuthentication.Instance.SignIn(_login_Text.text, _password_Text.text, true);
+            XsollaAuthentication.Instance.SignIn(_login_Text.text, _password_Text.text, _saveMe_ChkBox.isOn);
         }
         else
             Debug.Log("Fill all fields");
