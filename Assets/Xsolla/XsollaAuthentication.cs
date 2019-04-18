@@ -444,29 +444,6 @@ namespace Xsolla
             StartCoroutine(PostRequest(_JWTvalidationURL, form, onRecievedToken));
         }
         #endregion
-
-        #region URL
-        private string ParseUrl(string message)
-        {
-            try
-            {
-                string url = (JsonUtility.FromJson<URLJson>(message)).url;
-                return url;
-            }
-            catch (Exception)
-            {
-                if (OnInvalidToken != null)
-                    OnInvalidToken.Invoke();
-                return "";
-            }
-        }
-
-        private void OpenUrl(string url)
-        {
-            Application.OpenURL(url);
-        }
-        #endregion
-
         #region WebRequest
         private IEnumerator PostRequest(string url, WWWForm form, Action<bool, string> callback = null)
         {
