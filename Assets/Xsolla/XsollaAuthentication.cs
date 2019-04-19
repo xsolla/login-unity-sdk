@@ -64,15 +64,15 @@ namespace Xsolla
         /// <summary>
         /// Required. You can find it in your project settings. See xsolla.com
         /// </summary>
-        public string LoginProjectID
+        public string LoginID
         {
             get
             {
-                return _loginProjectId;
+                return _loginId;
             }
             set
             {
-                _loginProjectId = value;
+                _loginId = value;
             }
         }
         /// <summary>
@@ -82,22 +82,22 @@ namespace Xsolla
         {
             get
             {
-                return _callbackUrl;
+                return _callbackURL;
             }
             set
             {
-                _callbackUrl = value;
+                _callbackURL = value;
             }
         }
-        public string JWTvalidationURL
+        public string JWTValidationURL
         {
             get
             {
-                return _JWTvalidationURL;
+                return _JWTValidationURL;
             }
             set
             {
-                _JWTvalidationURL = value;
+                _JWTValidationURL = value;
             }
         }
         public string Token
@@ -118,23 +118,23 @@ namespace Xsolla
             }
         }
 
-        public bool IsJWTvalidationToken
+        public bool IsJWTValidationToken
         {
             get
             {
-                return _isJWTvalidationToken;
+                return _isJWTValidationToken;
             }
 
             set
             {
-                _isJWTvalidationToken = value;
+                _isJWTValidationToken = value;
             }
         }
         public string LastUserLogin
         {
             get
             {
-                return PlayerPrefs.HasKey("Xsolla_User_Login") && (_loginProjectId != null && _loginProjectId.Length > 0) 
+                return PlayerPrefs.HasKey("Xsolla_User_Login") && (_loginId != null && _loginId.Length > 0) 
                     ? PlayerPrefs.GetString("Xsolla_User_Login") 
                     : "";
             }
@@ -143,19 +143,19 @@ namespace Xsolla
         {
             get
             {
-                return PlayerPrefs.HasKey("Xsolla_User_Password") && (_loginProjectId != null && _loginProjectId.Length > 0) 
-                    ? Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginProjectID.Replace("-", "").Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password")) 
+                return PlayerPrefs.HasKey("Xsolla_User_Password") && (_loginId != null && _loginId.Length > 0) 
+                    ? Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", "").Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password")) 
                     : "";
             }
         }
         [SerializeField]
-        private string _loginProjectId;
+        private string _loginId;
         [SerializeField]
-        private bool _isJWTvalidationToken;
+        private bool _isJWTValidationToken;
         [SerializeField]
-        private string _JWTvalidationURL;
+        private string _JWTValidationURL;
         [SerializeField]
-        private string _callbackUrl;
+        private string _callbackURL;
 
         public static XsollaAuthentication Instance = null;
 
@@ -192,7 +192,7 @@ namespace Xsolla
             WWWForm form = new WWWForm();
             form.AddField("username", login);
 
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/password/reset/request?projectId="+_loginProjectId+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, form,
+            StartCoroutine(PostRequest("https://login.xsolla.com/api/password/reset/request?projectId="+_loginId+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, form,
                 (status, message) =>
                 {
                     if (!CheckForErrors(status, message, CheckResetPasswordError) && OnSuccesfulResetPassword != null)
@@ -209,12 +209,12 @@ namespace Xsolla
             form.AddField("username", username);
             form.AddField("password", password);
             form.AddField("remember_me", remember_user.ToString());
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/login?projectId="+_loginProjectId+"&login_url="+_callbackUrl+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, form,
+            StartCoroutine(PostRequest("https://login.xsolla.com/api/login?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, form,
                 (status, message) =>
                 {
                     if (!CheckForErrors(status, message, CheckSignInError))
                     {
-                        if (_isJWTvalidationToken)
+                        if (_isJWTValidationToken)
                             JWTValidation(message, () => { if (remember_user) SaveLoginPassword(username, password); });
                         else if (OnSuccesfulSignIn != null)
                         {
@@ -229,10 +229,10 @@ namespace Xsolla
 
         private void SaveLoginPassword(string username, string password)
         {
-            if (_loginProjectId != null && _loginProjectId.Length > 0)
+            if (_loginId != null && _loginId.Length > 0)
             {
                 PlayerPrefs.SetString("Xsolla_User_Login", username);
-                PlayerPrefs.SetString("Xsolla_User_Password", Crypto.Encrypt(Encoding.ASCII.GetBytes(LoginProjectID.Replace("-", "").Substring(0, 16)), password));
+                PlayerPrefs.SetString("Xsolla_User_Password", Crypto.Encrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", "").Substring(0, 16)), password));
             }
         }
 
@@ -246,7 +246,7 @@ namespace Xsolla
             registrationForm.AddField("password", password);
             registrationForm.AddField("email", email);
 
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/user?projectId="+_loginProjectId+"&login_url="+_callbackUrl+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, registrationForm,
+            StartCoroutine(PostRequest("https://login.xsolla.com/api/user?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, registrationForm,
                 (status, message) =>
                 {
                     if (!CheckForErrors(status, message, CheckRegistrationError) && OnSuccesfulRegistration != null)
@@ -441,7 +441,7 @@ namespace Xsolla
         {
             WWWForm form = new WWWForm();
             form.AddField("token", token);
-            StartCoroutine(PostRequest(_JWTvalidationURL, form, onRecievedToken));
+            StartCoroutine(PostRequest(_JWTValidationURL, form, onRecievedToken));
         }
         #endregion
         #region WebRequest
