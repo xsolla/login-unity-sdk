@@ -18,14 +18,14 @@ public class SignInPage : Page, ISignIn
     private void Awake()
     {
         _signIn_Btn.onClick.AddListener(SignIn);
-        _login_Text.text = XsollaAuthentication.Instance.LastUserLogin;
-        _password_Text.text = XsollaAuthentication.Instance.LastUserPassword;
     }
 
 
     private void Start()
     {
-        XsollaAuthentication.Instance.OnSuccesfulSignIn += OnSignIn;
+        _login_Text.text = XsollaAuthentication.Instance.LastUserLogin;
+        _password_Text.text = XsollaAuthentication.Instance.LastUserPassword;
+        XsollaAuthentication.Instance.OnSuccessfulSignIn += OnSignIn;
         XsollaAuthentication.Instance.OnValidToken += OnValidToken;
         XsollaAuthentication.Instance.OnInvalidToken += OnInvalidToken;
         XsollaAuthentication.Instance.OnCaptchaRequiredException += OnCaptchaRequiredException;
@@ -83,7 +83,7 @@ public class SignInPage : Page, ISignIn
     }
     void OnDestroy()
     {
-        XsollaAuthentication.Instance.OnSuccesfulSignIn -= OnSignIn;
+        XsollaAuthentication.Instance.OnSuccessfulSignIn -= OnSignIn;
         XsollaAuthentication.Instance.OnValidToken -= OnValidToken;
         XsollaAuthentication.Instance.OnInvalidToken -= OnInvalidToken;
         XsollaAuthentication.Instance.OnCaptchaRequiredException -= OnCaptchaRequiredException;

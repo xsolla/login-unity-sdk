@@ -13,9 +13,10 @@ namespace Xsolla
     public class XsollaAuthentication : MonoBehaviour
     {
         #region SuccessEvents
-        public event Action OnSuccesfulRegistration;
-        public event Action<XsollaUser> OnSuccesfulSignIn;
-        public event Action OnSuccesfulResetPassword;
+        public event Action OnSuccessfulRegistration;
+        public event Action<XsollaUser> OnSuccessfulSignIn;
+        public event Action OnSuccessfulResetPassword;
+        public event Action OnSuccessfulSignOut;
         public event Action<string> OnValidToken;
         #endregion
 
@@ -130,6 +131,18 @@ namespace Xsolla
                 _isJWTValidationToken = value;
             }
         }
+        public bool IsProxy
+        {
+            get
+            {
+                return _isProxy;
+            }
+
+            set
+            {
+                _isProxy = value;
+            }
+        }
         public string LastUserLogin
         {
             get
@@ -154,6 +167,8 @@ namespace Xsolla
         private bool _isJWTValidationToken;
         [SerializeField]
         private string _JWTValidationURL;
+        [SerializeField]
+        private bool _isProxy;
         [SerializeField]
         private string _callbackURL;
 
@@ -181,7 +196,8 @@ namespace Xsolla
                 PlayerPrefs.DeleteKey("Xsolla_Token");
             if (PlayerPrefs.HasKey("Xsolla_Token_Exp"))
                 PlayerPrefs.DeleteKey("Xsolla_Token_Exp");
-            Debug.Log("Succesfully log out");
+            if (OnSuccessfulSignOut != null)
+                OnSuccessfulSignOut.Invoke();
         }
 
         /// <summary>
@@ -191,12 +207,13 @@ namespace Xsolla
         {
             WWWForm form = new WWWForm();
             form.AddField("username", login);
-
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/password/reset/request?projectId="+_loginId+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, form,
+            string api = _isProxy ? "password/reset/request" : "proxy/registration/password/reset";
+           
+            StartCoroutine(PostRequest("https://login.xsolla.com/api/" + api+"?projectId="+_loginId+"&engine=unity&engine_v="+Application.unityVersion+"&sdk=login&sdk_v="+sdk_v, form,
                 (status, message) =>
                 {
-                    if (!CheckForErrors(status, message, CheckResetPasswordError) && OnSuccesfulResetPassword != null)
-                        OnSuccesfulResetPassword.Invoke();
+                    if (!CheckForErrors(status, message, CheckResetPasswordError) && OnSuccessfulResetPassword != null)
+                        OnSuccessfulResetPassword.Invoke();
                 }));
         }
 
@@ -209,16 +226,16 @@ namespace Xsolla
             form.AddField("username", username);
             form.AddField("password", password);
             form.AddField("remember_me", remember_user.ToString());
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/login?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, form,
+            StartCoroutine(PostRequest("https://login.xsolla.com/api/" + (_isProxy ? "proxy/" : "")+"login?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.unityVersion + "&sdk=login&sdk_v="+sdk_v, form,
                 (status, message) =>
                 {
                     if (!CheckForErrors(status, message, CheckSignInError))
                     {
                         if (_isJWTValidationToken)
                             JWTValidation(message, () => { if (remember_user) SaveLoginPassword(username, password); });
-                        else if (OnSuccesfulSignIn != null)
+                        else if (OnSuccessfulSignIn != null)
                         {
-                            OnSuccesfulSignIn.Invoke(new XsollaUser());
+                            OnSuccessfulSignIn.Invoke(new XsollaUser());
                             if (remember_user)
                                 SaveLoginPassword(username, password);
                         }
@@ -246,11 +263,11 @@ namespace Xsolla
             registrationForm.AddField("password", password);
             registrationForm.AddField("email", email);
 
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/user?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.version+"&sdk=login&sdk_v="+sdk_v, registrationForm,
+            StartCoroutine(PostRequest("https://login.xsolla.com/api/" + (_isProxy ? "proxy/registration" : "user")+"?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.unityVersion + "&sdk=login&sdk_v="+sdk_v, registrationForm,
                 (status, message) =>
                 {
-                    if (!CheckForErrors(status, message, CheckRegistrationError) && OnSuccesfulRegistration != null)
-                        OnSuccesfulRegistration.Invoke();
+                    if (!CheckForErrors(status, message, CheckRegistrationError) && OnSuccessfulRegistration != null)
+                        OnSuccessfulRegistration.Invoke();
                 }));
         }
 
@@ -410,8 +427,8 @@ namespace Xsolla
                         PlayerPrefs.SetString("Xsolla_Token_Exp", xsollaUser.exp);
                         if (OnValidToken != null)
                             OnValidToken.Invoke(token);
-                        if (OnSuccesfulSignIn != null)
-                            OnSuccesfulSignIn.Invoke(xsollaUser);
+                        if (OnSuccessfulSignIn != null)
+                            OnSuccessfulSignIn.Invoke(xsollaUser);
                         if (onFinishValidate != null)
                             onFinishValidate.Invoke();
                     }

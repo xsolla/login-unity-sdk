@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Xsolla;
@@ -9,6 +10,12 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         _exit_Btn.onClick.AddListener(LogOut);
+        XsollaAuthentication.Instance.OnSuccessfulSignOut += OnSignOut;
+    }
+
+    private void OnSignOut()
+    {
+        Debug.Log("Successfully sign out");
     }
 
     private void LogOut()

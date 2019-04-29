@@ -4,4 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Xsolla/AuthDemo/Assets/Scenes/Auth.unity
+    guid: 9783d80efe9040743a89d5a918a67a79
+  - enabled: 1
+    path: Assets/Xsolla/AuthDemo/Assets/Scenes/Game.unity
+    guid: de93ca81bd638d545a452de944641921
+  m_configObjects: {}

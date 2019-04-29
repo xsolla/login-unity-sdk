@@ -22,7 +22,7 @@ public class CreateAccountPage :  Page, ICreateAccount
     }
     private void Start()
     {
-        XsollaAuthentication.Instance.OnSuccesfulRegistration += OnSuccesfulRegistration;
+        XsollaAuthentication.Instance.OnSuccessfulRegistration += OnSuccesfulRegistration;
         XsollaAuthentication.Instance.OnRegistrationNotAllowedException += OnRegistrationNotAllowed;
         XsollaAuthentication.Instance.OnUsernameIsTaken += OnUsernameIsTaken;
         XsollaAuthentication.Instance.OnEmailIsTaken += OnEmailIsTaken;
@@ -49,7 +49,7 @@ public class CreateAccountPage :  Page, ICreateAccount
     }
     private void OnDestroy()
     {
-        XsollaAuthentication.Instance.OnSuccesfulRegistration -= OnSuccesfulRegistration;
+        XsollaAuthentication.Instance.OnSuccessfulRegistration -= OnSuccesfulRegistration;
         XsollaAuthentication.Instance.OnRegistrationNotAllowedException -= OnRegistrationNotAllowed;
         XsollaAuthentication.Instance.OnUsernameIsTaken -= OnUsernameIsTaken;
         XsollaAuthentication.Instance.OnEmailIsTaken -= OnEmailIsTaken;

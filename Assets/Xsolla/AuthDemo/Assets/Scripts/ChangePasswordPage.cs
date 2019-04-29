@@ -20,7 +20,7 @@ public class ChangePasswordPage : Page, IChangePassword
     }
     private void Start()
     {
-        XsollaAuthentication.Instance.OnSuccesfulResetPassword += OnSuccesfullResetPassword;
+        XsollaAuthentication.Instance.OnSuccessfulResetPassword += OnSuccesfullResetPassword;
         XsollaAuthentication.Instance.OnPassworResetingNotAllowedForProject += OnPassworResetingNotAllowedForProject;
     }
 
@@ -35,7 +35,7 @@ public class ChangePasswordPage : Page, IChangePassword
     }
     private void OnDestroy()
     {
-        XsollaAuthentication.Instance.OnSuccesfulResetPassword -= OnSuccesfullResetPassword;
+        XsollaAuthentication.Instance.OnSuccessfulResetPassword -= OnSuccesfullResetPassword;
         XsollaAuthentication.Instance.OnPassworResetingNotAllowedForProject -= OnPassworResetingNotAllowedForProject;
     }
     public void ChangePassword()
