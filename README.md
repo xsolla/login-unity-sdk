@@ -1,6 +1,6 @@
 # Login Unity SDK
 
-Login Unity SDK is used to integrate Xsolla Login API methods with apps based on Unity. 
+Login Unity SDK is used to integrate [Xsolla Login API](https://developers.xsolla.com/api/v2/login/) methods with apps based on [Unity](https://unity.com/). 
 
 This solution works only for:
 * storing user data at Xsolla’s side
