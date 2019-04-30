@@ -2784,27 +2784,27 @@ PrefabInstance:
     - target: {fileID: 114447770900048144, guid: 03f3ddcea02ab004dac400fbe4304a84,
         type: 3}
       propertyPath: _isProxy
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114447770900048144, guid: 03f3ddcea02ab004dac400fbe4304a84,
         type: 3}
       propertyPath: _JWTValidationURL
-      value: 'https://us-central1-xsolla-auth.cloudfunctions.net/validate/ '
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 114447770900048144, guid: 03f3ddcea02ab004dac400fbe4304a84,
         type: 3}
       propertyPath: _loginId
-      value: 722cd46d-55e3-11e9-9244-42010aa80004
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 114447770900048144, guid: 03f3ddcea02ab004dac400fbe4304a84,
         type: 3}
       propertyPath: _isJWTValidationToken
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114447770900048144, guid: 03f3ddcea02ab004dac400fbe4304a84,
         type: 3}
       propertyPath: _callbackURL
-      value: http://ec2-35-178-244-35.eu-west-2.compute.amazonaws.com/callback
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 03f3ddcea02ab004dac400fbe4304a84, type: 3}
