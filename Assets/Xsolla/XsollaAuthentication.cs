@@ -156,9 +156,16 @@ namespace Xsolla
         {
             get
             {
-                return PlayerPrefs.HasKey("Xsolla_User_Password") && (_loginId != null && _loginId.Length > 0) 
-                    ? Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", "").Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password")) 
-                    : "";
+                try
+                {
+                    return PlayerPrefs.HasKey("Xsolla_User_Password") && (_loginId != null && _loginId.Length > 0)
+                        ? Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", "").Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password"))
+                        : "";
+                }
+                catch (Exception)
+                {
+                    return "";
+                }
             }
         }
         [SerializeField]
