@@ -181,17 +181,25 @@ namespace Xsolla
 
         public static XsollaAuthentication Instance = null;
 
+        // REVIEW This code introduces bug - every time you switch to another scene and back number of XsollaAuthentication instances increases
+        // Reason for that is wrong implementation of Singleton pattern.
         private void Awake()
         {
             if (Instance == null)
             {
+	            // Ok, Instance will hold reference to first XsollaAuthentication object created after game starts
                 Instance = this;
             }
             else if (Instance == this)
             {
+	            // XsollaAuthentication object is part of the scene, so every time after scene is loaded new XsollaAuthentication will be instantiated.
+	            // Its reference can't be equal to Instance and this code will never be executed. That is why duplicates are created.
                 Destroy(gameObject);
             }
             DontDestroyOnLoad(gameObject);
+            
+            // More generic approach to implement Singleton you can find here https://gist.github.com/tustanivsky/1122b1f5ded12cdb6320d5eebaabc35b.
+            // Simply inherit XsollaAuthentication from MonoSingleton and overload Init method for any additional initialization.
         }
 
         /// <summary>
