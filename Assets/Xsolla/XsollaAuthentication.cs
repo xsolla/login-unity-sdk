@@ -13,6 +13,8 @@ namespace Xsolla
 	// REVIEW 
 	// string.Empty can be used instead of "" literals
 	// There is no need to mark private class members as 'private' explicitly
+	// Keys for player preferences should be moved to separate class that holds constants
+	// What about creating class that manages all request url formatting stuff?
     public class XsollaAuthentication : MonoBehaviour
     {
         #region SuccessEvents
