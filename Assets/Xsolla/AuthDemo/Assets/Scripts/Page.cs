@@ -6,7 +6,7 @@ public interface IPage
     void Open();
     void Close();
 }
-public abstract class Page : MonoBehaviour, IPage
+public class Page : MonoBehaviour, IPage
 {
     public void Close()
     {

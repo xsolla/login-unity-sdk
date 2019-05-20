@@ -6,7 +6,7 @@ using Xsolla;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] Button _exit_Btn;
+    [SerializeField] private Button _exit_Btn;
     private void Start()
     {
         _exit_Btn.onClick.AddListener(LogOut);

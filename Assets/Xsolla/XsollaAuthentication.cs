@@ -34,7 +34,7 @@ namespace Xsolla
         #endregion
         #region ResetPassword
         //0 or 003-061
-        public event Action<ErrorDescription> OnPassworResetingNotAllowedForProject;
+        public event Action<ErrorDescription> OnPasswordResetingNotAllowedForProject;
         #endregion
         #region Registration
         //010-003
@@ -316,8 +316,8 @@ namespace Xsolla
             switch (errorDescription.code)
             {
                 case "003-007":
-                if (OnPassworResetingNotAllowedForProject != null)
-                    OnPassworResetingNotAllowedForProject.Invoke(errorDescription);
+                if (OnPasswordResetingNotAllowedForProject != null)
+                    OnPasswordResetingNotAllowedForProject.Invoke(errorDescription);
                     break;
                 default:
                     return false;

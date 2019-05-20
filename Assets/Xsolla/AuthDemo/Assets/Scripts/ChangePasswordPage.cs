@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Xsolla;
 
@@ -9,39 +8,50 @@ public interface IChangePassword
 }
 public class ChangePasswordPage : Page, IChangePassword
 {
-    [SerializeField] InputField _login_Text;
-    [SerializeField] Button _close_Btn;
-    [SerializeField] Button _change_Btn;
+    [SerializeField] private InputField email_InputField;
+    [SerializeField] private Button change_Btn;
+    [SerializeField] private GameObject success_Panel;
+    [Header("Swap Button Images")]
+    [SerializeField] private Image change_Image;
+    [SerializeField] private Sprite disabled_Sprite;
+    [SerializeField] private Sprite enabled_Sprite;
 
     private void Awake()
     {
-        _close_Btn.onClick.AddListener(Close);
-        _change_Btn.onClick.AddListener(ChangePassword);
+        change_Btn.onClick.AddListener(ChangePassword);
+        email_InputField.onValueChanged.AddListener(ChangeButtonImage);
+    }
+
+    private void ChangeButtonImage(string arg0)
+    {
+        if (email_InputField.text != "")
+        {
+            if (change_Image.sprite != enabled_Sprite)
+                change_Image.sprite = enabled_Sprite;
+        }
+        else if (change_Image.sprite == enabled_Sprite)
+            change_Image.sprite = disabled_Sprite;
     }
     private void Start()
     {
         XsollaAuthentication.Instance.OnSuccessfulResetPassword += OnSuccesfullResetPassword;
-        XsollaAuthentication.Instance.OnPassworResetingNotAllowedForProject += OnPassworResetingNotAllowedForProject;
     }
 
-    private void OnPassworResetingNotAllowedForProject(ErrorDescription error)
-    {
-        Debug.Log("Passwor Reseting Not Allowed For Project "+error.code+", "+error.description);
-    }
 
     private void OnSuccesfullResetPassword()
     {
         Debug.Log("Successfull reseted password");
+        success_Panel.GetComponent<IPage>().Open();
+        success_Panel.GetComponent<ISuccessPage>().SetEmail(email_InputField.text);
     }
     private void OnDestroy()
     {
         XsollaAuthentication.Instance.OnSuccessfulResetPassword -= OnSuccesfullResetPassword;
-        XsollaAuthentication.Instance.OnPassworResetingNotAllowedForProject -= OnPassworResetingNotAllowedForProject;
     }
     public void ChangePassword()
     {
-        if (_login_Text.text != "")
-            XsollaAuthentication.Instance.ResetPassword(_login_Text.text);
+        if (email_InputField.text != "")
+            XsollaAuthentication.Instance.ResetPassword(email_InputField.text);
         else
             Debug.Log("Fill all fields");
     }
