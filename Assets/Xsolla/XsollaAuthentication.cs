@@ -10,6 +10,9 @@ using System.IO;
 
 namespace Xsolla
 {
+	// REVIEW 
+	// string.Empty can be used instead of "" literals
+	// There is no need to mark private class members as 'private' explicitly
     public class XsollaAuthentication : MonoBehaviour
     {
         #region SuccessEvents
@@ -114,6 +117,8 @@ namespace Xsolla
             {
                 long epochTicks = new DateTime(1970, 1, 1).Ticks;
                 long unixTime = ((DateTime.UtcNow.Ticks - epochTicks) / TimeSpan.TicksPerSecond);
+                
+                // REVIEW Avoid using nested '?' operators - it makes code harder to read
                 return PlayerPrefs.HasKey("Xsolla_Token_Exp") ? PlayerPrefs.GetString("Xsolla_Token_Exp") != "" ?
                     (long.Parse(PlayerPrefs.GetString("Xsolla_Token_Exp"))) >= unixTime : false : false;
             }
@@ -147,6 +152,7 @@ namespace Xsolla
         {
             get
             {
+	            // REVIEW Simply use string.IsNullOrEmpty to validate string
                 return PlayerPrefs.HasKey("Xsolla_User_Login") && (_loginId != null && _loginId.Length > 0) 
                     ? PlayerPrefs.GetString("Xsolla_User_Login") 
                     : "";
@@ -158,6 +164,7 @@ namespace Xsolla
             {
                 try
                 {
+	                // REVIEW Simply use string.IsNullOrEmpty to validate string
                     return PlayerPrefs.HasKey("Xsolla_User_Password") && (_loginId != null && _loginId.Length > 0)
                         ? Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", "").Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password"))
                         : "";
@@ -224,6 +231,7 @@ namespace Xsolla
             form.AddField("username", login);
             string api = _isProxy ? "password/reset/request" : "proxy/registration/password/reset";
            
+            // REVIEW Consider using string interpolation or StringBuilder instead of concatenation
             StartCoroutine(PostRequest("https://login.xsolla.com/api/" + api+"?projectId="+_loginId+"&engine=unity&engine_v="+Application.unityVersion+"&sdk=login&sdk_v="+sdk_v, form,
                 (status, message) =>
                 {
@@ -241,6 +249,8 @@ namespace Xsolla
             form.AddField("username", username);
             form.AddField("password", password);
             form.AddField("remember_me", remember_user.ToString());
+            
+            // REVIEW Consider using string interpolation or StringBuilder instead of concatenation
             StartCoroutine(PostRequest("https://login.xsolla.com/api/" + (_isProxy ? "proxy/" : "")+"login?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.unityVersion + "&sdk=login&sdk_v="+sdk_v, form,
                 (status, message) =>
                 {
@@ -278,6 +288,7 @@ namespace Xsolla
             registrationForm.AddField("password", password);
             registrationForm.AddField("email", email);
 
+            // REVIEW Consider using string interpolation or StringBuilder instead of concatenation
             StartCoroutine(PostRequest("https://login.xsolla.com/api/" + (_isProxy ? "proxy/registration" : "user")+"?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.unityVersion + "&sdk=login&sdk_v="+sdk_v, registrationForm,
                 (status, message) =>
                 {
@@ -477,6 +488,9 @@ namespace Xsolla
         }
         #endregion
         #region WebRequest
+        
+        // REVIEW Consider moving methods for communication with web server to separate class
+        
         private IEnumerator PostRequest(string url, WWWForm form, Action<bool, string> callback = null)
         {
             UnityWebRequest request = UnityWebRequest.Post(url, form);
@@ -487,6 +501,7 @@ namespace Xsolla
             request.Send();
 #endif
 
+	        // REVIEW Why not just yielding the async operation returned by Send/SendWebRequest to wait until the UnityWebRequest is done?
             while (!request.isDone)
             {
                 //wait 
@@ -510,6 +525,7 @@ namespace Xsolla
 #else
             request.Send();
 #endif
+	        // REVIEW Why not just yielding the async operation returned by Send/SendWebRequest to wait until the UnityWebRequest is done?
             while (!request.isDone)
             {
                 //wait 
@@ -565,6 +581,8 @@ namespace Xsolla
         public XsollaUser token_payload;
     }
     #endregion
+    
+    // REVIEW This class can be moved to separate file
     class Crypto
     {
         public static string Encrypt(byte[] key, string dataToEncrypt)
