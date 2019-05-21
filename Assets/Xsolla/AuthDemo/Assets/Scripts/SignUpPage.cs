@@ -5,6 +5,7 @@ using Xsolla;
 public interface ISignUp
 {
     void SignUp();
+    string SignUpEmail { get; }
 }
 public class SignUpPage :  Page, ISignUp
 {
@@ -17,6 +18,14 @@ public class SignUpPage :  Page, ISignUp
     [SerializeField] private Image signUp_Image;
     [SerializeField] private Sprite disabled_Sprite;
     [SerializeField] private Sprite enabled_Sprite;
+
+    public string SignUpEmail
+    {
+        get
+        {
+            return email_InputField.text;
+        }
+    }
 
     private void Awake()
     {
@@ -77,11 +86,12 @@ public class SignUpPage :  Page, ISignUp
     }
     public void SignUp()
     {
-        if (login_InputField.text != "" && password_InputField.text != "" && email_InputField.text != "")
+        if (login_InputField.text != "" && password_InputField.text.Length >= 6 && email_InputField.text != "")
         {
             XsollaAuthentication.Instance.Registration(login_InputField.text, password_InputField.text, email_InputField.text);
         }
         else
             Debug.Log("Fill all fields");
     }
+
 }
