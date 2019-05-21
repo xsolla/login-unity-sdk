@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.Networking;
-using System.Security;
 using System.Text;
-using System.Security.Cryptography;
-using System.IO;
 
 namespace Xsolla
 {
-	// REVIEW 
-	// string.Empty can be used instead of "" literals
-	// There is no need to mark private class members as 'private' explicitly
-	// Keys for player preferences should be moved to separate class that holds constants
-	// What about creating class that manages all request url formatting stuff?
-    public class XsollaAuthentication : MonoBehaviour
+    // REVIEW 
+    // Keys for player preferences should be moved to separate class that holds constants ---- Cant do it cause they use constants like login id which was declared here
+    // What about creating class that manages all request url formatting stuff? --- useless
+    public class XsollaAuthentication : MonoSingleton<XsollaAuthentication>
     {
         #region SuccessEvents
         public event Action OnSuccessfulRegistration;
@@ -119,10 +112,11 @@ namespace Xsolla
             {
                 long epochTicks = new DateTime(1970, 1, 1).Ticks;
                 long unixTime = ((DateTime.UtcNow.Ticks - epochTicks) / TimeSpan.TicksPerSecond);
-                
-                // REVIEW Avoid using nested '?' operators - it makes code harder to read
-                return PlayerPrefs.HasKey("Xsolla_Token_Exp") ? PlayerPrefs.GetString("Xsolla_Token_Exp") != "" ?
-                    (long.Parse(PlayerPrefs.GetString("Xsolla_Token_Exp"))) >= unixTime : false : false;
+
+                if (PlayerPrefs.HasKey("Xsolla_Token_Exp") && !string.IsNullOrEmpty(PlayerPrefs.GetString("Xsolla_Token_Exp")))
+                    return long.Parse(PlayerPrefs.GetString("Xsolla_Token_Exp")) >= unixTime;
+                else
+                    return false;
             }
         }
 
@@ -154,10 +148,10 @@ namespace Xsolla
         {
             get
             {
-	            // REVIEW Simply use string.IsNullOrEmpty to validate string
-                return PlayerPrefs.HasKey("Xsolla_User_Login") && (_loginId != null && _loginId.Length > 0) 
-                    ? PlayerPrefs.GetString("Xsolla_User_Login") 
-                    : "";
+                if (PlayerPrefs.HasKey("Xsolla_User_Login") && !string.IsNullOrEmpty(_loginId))
+                    return PlayerPrefs.GetString("Xsolla_User_Login");
+                else
+                    return "";
             }
         }
         public string LastUserPassword
@@ -166,10 +160,10 @@ namespace Xsolla
             {
                 try
                 {
-	                // REVIEW Simply use string.IsNullOrEmpty to validate string
-                    return PlayerPrefs.HasKey("Xsolla_User_Password") && (_loginId != null && _loginId.Length > 0)
-                        ? Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", "").Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password"))
-                        : "";
+                    if (PlayerPrefs.HasKey("Xsolla_User_Password") && !string.IsNullOrEmpty(_loginId))
+                        return Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", "").Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password"));
+                    else
+                        return "";
                 }
                 catch (Exception)
                 {
@@ -187,29 +181,6 @@ namespace Xsolla
         private bool _isProxy;
         [SerializeField]
         private string _callbackURL;
-
-        public static XsollaAuthentication Instance = null;
-
-        // REVIEW This code introduces bug - every time you switch to another scene and back number of XsollaAuthentication instances increases
-        // Reason for that is wrong implementation of Singleton pattern.
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-	            // Ok, Instance will hold reference to first XsollaAuthentication object created after game starts
-                Instance = this;
-            }
-            else if (Instance == this)
-            {
-	            // XsollaAuthentication object is part of the scene, so every time after scene is loaded new XsollaAuthentication will be instantiated.
-	            // Its reference can't be equal to Instance and this code will never be executed. That is why duplicates are created.
-                Destroy(gameObject);
-            }
-            DontDestroyOnLoad(gameObject);
-            
-            // More generic approach to implement Singleton you can find here https://gist.github.com/tustanivsky/1122b1f5ded12cdb6320d5eebaabc35b.
-            // Simply inherit XsollaAuthentication from MonoSingleton and overload Init method for any additional initialization.
-        }
 
         /// <summary>
         /// Clear Token 
@@ -231,10 +202,11 @@ namespace Xsolla
         {
             WWWForm form = new WWWForm();
             form.AddField("username", login);
-            string api = _isProxy ? "password/reset/request" : "proxy/registration/password/reset";
-           
-            // REVIEW Consider using string interpolation or StringBuilder instead of concatenation
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/" + api+"?projectId="+_loginId+"&engine=unity&engine_v="+Application.unityVersion+"&sdk=login&sdk_v="+sdk_v, form,
+
+            string proxy = _isProxy ? "password/reset/request" : "proxy/registration/password/reset";
+
+            StartCoroutine(WebRequests.PostRequest(string.Format("https://login.xsolla.com/api/{0}?projectId={1}&engine=unity&engine_v={2}&sdk=login&sdk_v={3}", proxy, _loginId, Application.unityVersion, sdk_v),
+                form,
                 (status, message) =>
                 {
                     if (!CheckForErrors(status, message, CheckResetPasswordError) && OnSuccessfulResetPassword != null)
@@ -252,8 +224,11 @@ namespace Xsolla
             form.AddField("password", password);
             form.AddField("remember_me", remember_user.ToString());
             
-            // REVIEW Consider using string interpolation or StringBuilder instead of concatenation
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/" + (_isProxy ? "proxy/" : "")+"login?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.unityVersion + "&sdk=login&sdk_v="+sdk_v, form,
+            string proxy = _isProxy ? "proxy/" : "";
+
+            StartCoroutine(WebRequests.PostRequest(
+                string.Format("https://login.xsolla.com/api/{0}login?projectId={1}&login_url={2}&engine=unity&engine_v={3}&sdk=login&sdk_v={4}", proxy, _loginId, _callbackURL, Application.unityVersion, sdk_v),
+                form,
                 (status, message) =>
                 {
                     if (!CheckForErrors(status, message, CheckSignInError))
@@ -273,7 +248,7 @@ namespace Xsolla
 
         private void SaveLoginPassword(string username, string password)
         {
-            if (_loginId != null && _loginId.Length > 0)
+            if (!string.IsNullOrEmpty(_loginId))
             {
                 PlayerPrefs.SetString("Xsolla_User_Login", username);
                 PlayerPrefs.SetString("Xsolla_User_Password", Crypto.Encrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", "").Substring(0, 16)), password));
@@ -289,9 +264,12 @@ namespace Xsolla
             registrationForm.AddField("username", username);
             registrationForm.AddField("password", password);
             registrationForm.AddField("email", email);
+            
+            string proxy = _isProxy ? "proxy/registration" : "user";
 
-            // REVIEW Consider using string interpolation or StringBuilder instead of concatenation
-            StartCoroutine(PostRequest("https://login.xsolla.com/api/" + (_isProxy ? "proxy/registration" : "user")+"?projectId="+_loginId+"&login_url="+_callbackURL+"&engine=unity&engine_v="+Application.unityVersion + "&sdk=login&sdk_v="+sdk_v, registrationForm,
+            StartCoroutine(WebRequests.PostRequest(
+                string.Format("https://login.xsolla.com/api/{0}?projectId={1}&login_url={2}&engine=unity&engine_v={3}&sdk=login&sdk_v={4}", proxy, _loginId, _callbackURL, Application.unityVersion, sdk_v),
+                registrationForm,
                 (status, message) =>
                 {
                     if (!CheckForErrors(status, message, CheckRegistrationError) && OnSuccessfulRegistration != null)
@@ -446,7 +424,7 @@ namespace Xsolla
         private void JWTValidation(string message, Action onFinishValidate = null)
         {
             string token = ParseToken(message);
-            if (token != "")
+            if (!string.IsNullOrEmpty(token))
                 ValidateToken(token, (status, recievedMessage) =>
                 {
                     if (!CheckForErrors(status, recievedMessage, CheckTokenError))
@@ -486,64 +464,11 @@ namespace Xsolla
         {
             WWWForm form = new WWWForm();
             form.AddField("token", token);
-            StartCoroutine(PostRequest(_JWTValidationURL, form, onRecievedToken));
+            StartCoroutine(WebRequests.PostRequest(_JWTValidationURL, form, onRecievedToken));
         }
+
         #endregion
-        #region WebRequest
-        
-        // REVIEW Consider moving methods for communication with web server to separate class
-        
-        private IEnumerator PostRequest(string url, WWWForm form, Action<bool, string> callback = null)
-        {
-            UnityWebRequest request = UnityWebRequest.Post(url, form);
-
-#if UNITY_2018_1_OR_NEWER
-            request.SendWebRequest();
-#else
-            request.Send();
-#endif
-
-	        // REVIEW Why not just yielding the async operation returned by Send/SendWebRequest to wait until the UnityWebRequest is done?
-            while (!request.isDone)
-            {
-                //wait 
-                yield return new WaitForEndOfFrame();
-            }
-            if (request.isNetworkError && callback != null)
-            {
-                callback.Invoke(false, "");
-            }
-            else if (callback != null)
-            {
-                callback.Invoke(true, request.downloadHandler.text);
-            }
-        }
-        private IEnumerator GetRequest(string uri, Action<bool, string> callback = null)
-        {
-            UnityWebRequest request = UnityWebRequest.Get(uri);
-
-#if UNITY_2018_1_OR_NEWER
-            request.SendWebRequest();
-#else
-            request.Send();
-#endif
-	        // REVIEW Why not just yielding the async operation returned by Send/SendWebRequest to wait until the UnityWebRequest is done?
-            while (!request.isDone)
-            {
-                //wait 
-                yield return new WaitForEndOfFrame();
-            }
-            if (request.isNetworkError && callback != null)
-            {
-                callback.Invoke(false, "");
-            }
-            else if (callback != null)
-            {
-                callback.Invoke(true, request.downloadHandler.text);
-            }
-        }
     }
-    #endregion
     #region JsonClasses
     [Serializable]
     public struct XsollaUser
@@ -582,71 +507,5 @@ namespace Xsolla
     {
         public XsollaUser token_payload;
     }
-    #endregion
-    
-    // REVIEW This class can be moved to separate file
-    class Crypto
-    {
-        public static string Encrypt(byte[] key, string dataToEncrypt)
-        {
-            try
-            {
-                // Initialize
-                AesManaged encryptor = new AesManaged();
-                // Set the key
-                encryptor.Key = key;
-                encryptor.IV = key;
-                // create a memory stream
-                using (MemoryStream encryptionStream = new MemoryStream())
-                {
-                    // Create the crypto stream
-                    using (CryptoStream encrypt = new CryptoStream(encryptionStream, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        // Encrypt
-                        byte[] utfD1 = UTF8Encoding.UTF8.GetBytes(dataToEncrypt);
-                        encrypt.Write(utfD1, 0, utfD1.Length);
-                        encrypt.FlushFinalBlock();
-                        encrypt.Close();
-                        // Return the encrypted data
-                        return Convert.ToBase64String(encryptionStream.ToArray());
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return "";
-            }
-        }
-        public static string Decrypt(byte[] key, string encryptedString)
-        {
-            try
-            {
-                // Initialize
-                AesManaged decryptor = new AesManaged();
-                byte[] encryptedData = Convert.FromBase64String(encryptedString);
-                // Set the key
-                decryptor.Key = key;
-                decryptor.IV = key;
-                // create a memory stream
-                using (MemoryStream decryptionStream = new MemoryStream())
-                {
-                    // Create the crypto stream
-                    using (CryptoStream decrypt = new CryptoStream(decryptionStream, decryptor.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        // Encrypt
-                        decrypt.Write(encryptedData, 0, encryptedData.Length);
-                        decrypt.Flush();
-                        decrypt.Close();
-                        // Return the unencrypted data
-                        byte[] decryptedData = decryptionStream.ToArray();
-                        return UTF8Encoding.UTF8.GetString(decryptedData, 0, decryptedData.Length);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return "";
-            }
-        }
-    }
+#endregion
 }
