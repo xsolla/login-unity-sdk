@@ -198,12 +198,12 @@ namespace Xsolla
         /// <summary>
         /// Sending Reset Password Message to email by login.
         /// </summary>
-        public void ResetPassword(string login)
+        public void ResetPassword(string email)
         {
             WWWForm form = new WWWForm();
-            form.AddField("username", login);
+            form.AddField("username", email);
 
-            string proxy = _isProxy ? "password/reset/request" : "proxy/registration/password/reset";
+            string proxy = _isProxy ? "proxy/registration/password/reset" : "password/reset/request";
 
             StartCoroutine(WebRequests.PostRequest(string.Format("https://login.xsolla.com/api/{0}?projectId={1}&engine=unity&engine_v={2}&sdk=login&sdk_v={3}", proxy, _loginId, Application.unityVersion, sdk_v),
                 form,

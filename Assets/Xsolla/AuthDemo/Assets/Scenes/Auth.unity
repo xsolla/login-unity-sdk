@@ -3501,7 +3501,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1088373280}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2f169fe1406b7141af1d07f830adfb1, type: 3}
+  m_Script: {fileID: 11500000, guid: ba4bca0bb5fe9c34a9a791c13d5864d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   message_Text: {fileID: 2099092475}
@@ -5310,7 +5310,7 @@ PrefabInstance:
     - target: {fileID: 114447770900048144, guid: 03f3ddcea02ab004dac400fbe4304a84,
         type: 3}
       propertyPath: _isJWTValidationToken
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114447770900048144, guid: 03f3ddcea02ab004dac400fbe4304a84,
         type: 3}

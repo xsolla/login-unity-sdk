@@ -23,6 +23,7 @@ public class AuthController : MonoBehaviour
     private void Awake()
     {
         OpenPage(loginSignUp_Panel);
+        openLogin_Btn.GetComponent<IPanelVisualElement>().Select();
         OpenPage(login_Panel);
         popUp_Controller.GetComponent<IPopUpController>().OnClosePopUp = OpenSaved;
 
