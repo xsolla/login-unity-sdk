@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Xsolla;
 
+// REVIEW Is it still used?
 public class GameController : MonoBehaviour
 {
     [SerializeField] private Button _exit_Btn;

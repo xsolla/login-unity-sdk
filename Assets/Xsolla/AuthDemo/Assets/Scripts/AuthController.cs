@@ -132,6 +132,14 @@ public class AuthController : MonoBehaviour
     }
     private void UnsubscribeFromXsollaEvents()
     {
+	    // REVIEW
+	    // You can't unsubscribe from an event if you used an anonymous function to subscribe to it.
+	    // To unsubscribe in this scenario, it is necessary to go back to the code where you subscribe to the event, store the anonymous method in a delegate variable,
+	    // and then add the delegate to the event. In general, it is recommended that you do not use anonymous functions to subscribe to events
+	    // if you will have to unsubscribe from the event at some later point in your code.
+	    
+	    // Still worth to consider suggestion about public actions mentioned in XsollaAuthentication.cs
+	    
         XsollaAuthentication.Instance.OnSuccessfulRegistration -= () => OpenPopUp("User registration is successful. Check and confirm " + signUp_Panel.GetComponent<ISignUp>().SignUpEmail + " now!", PopUpWindows.Success);
         XsollaAuthentication.Instance.OnSuccessfulSignIn -= (user) => OpenPopUp("User authentication is completed! You can use Auth JWT token now!", PopUpWindows.Success);
         XsollaAuthentication.Instance.OnSuccessfulResetPassword -= () => Debug.Log("OnSuccessfulResetPassword");
