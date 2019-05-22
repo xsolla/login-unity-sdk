@@ -6,8 +6,21 @@ using System.Text;
 namespace Xsolla
 {
     // REVIEW 
+    
     // Keys for player preferences should be moved to separate class that holds constants ---- Cant do it cause they use constants like login id which was declared here
+    // -- Why we can't encapsulate strings like "Xsolla_Token", "Xsolla_Token_Exp" etc.?
+    
     // What about creating class that manages all request url formatting stuff? --- useless
+    // -- Ok, after refactoring code with strings concatenation it looks much better
+
+    // Does it make sense to expose separate actions for all success and error events?
+    // Its quite an overhead to subscribe for all this stuff and easy to miss something.
+    // Instead you can pass two callbacks (actions) to api methods (i.e. SignIn) - onComplete and onError.
+    // This will allow to provide all logic that is required to deal with method call results right in place where it is used.
+    // onError callback will receive ErrorDescription as a parameter and corresponding handler decides what to do with it.
+    
+    // Also, ErrorDescription class should be enhanced by introducing enumeration for error types - it is way more convenient than using strings.
+
     public class XsollaAuthentication : MonoSingleton<XsollaAuthentication>
     {
         #region SuccessEvents
@@ -148,7 +161,8 @@ namespace Xsolla
         {
             get
             {
-                if (PlayerPrefs.HasKey("Xsolla_User_Login") && !string.IsNullOrEmpty(_loginId))
+	            // REVIEW Please use string.Empty instead of "" literal - it makes code look a bit cleaner :)
+	            if (PlayerPrefs.HasKey("Xsolla_User_Login") && !string.IsNullOrEmpty(_loginId))
                     return PlayerPrefs.GetString("Xsolla_User_Login");
                 else
                     return "";
@@ -469,6 +483,9 @@ namespace Xsolla
 
         #endregion
     }
+    
+    // REVIEW Json classes can be moved to separate files as well - its a good practice to have separate files for different classes.
+    
     #region JsonClasses
     [Serializable]
     public struct XsollaUser
@@ -497,6 +514,8 @@ namespace Xsolla
         public string code;
         public string description;
     }
+    
+    // REVIEW Do we need URLJson class at all?
     [Serializable]
     internal class URLJson
     {
