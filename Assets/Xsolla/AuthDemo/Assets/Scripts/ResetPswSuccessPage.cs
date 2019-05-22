@@ -6,7 +6,7 @@ public interface ISuccessPage
     void SetEmail(string email);
 }
 
-public class ChangePswSuccessPage : Page, ISuccessPage
+public class ResetPswSuccessPage : Page, ISuccessPage
 {
     [SerializeField] private Button submit_Btn;
     [SerializeField] private Button return_Btn;
@@ -21,6 +21,6 @@ public class ChangePswSuccessPage : Page, ISuccessPage
     }
     public void SetEmail(string email)
     {
-        message_Text.text = start_Message + " " + email;
+        message_Text.text = string.Format("{0} {1}", start_Message, email);
     }
 }

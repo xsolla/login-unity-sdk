@@ -18,7 +18,7 @@ namespace Xsolla
 #endif
             if (request.isNetworkError && callback != null)
             {
-                callback.Invoke(false, "");
+                callback.Invoke(false, request.error);
             }
             else if (callback != null)
             {
@@ -36,7 +36,7 @@ namespace Xsolla
 #endif
             if (request.isNetworkError && callback != null)
             {
-                callback.Invoke(false, "");
+                callback.Invoke(false, request.error);
             }
             else if (callback != null)
             {

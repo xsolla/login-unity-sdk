@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using Xsolla;
 
@@ -6,6 +7,8 @@ public interface ISignUp
 {
     void SignUp();
     string SignUpEmail { get; }
+    Action OnSuccessfulSignUp { get; set; }
+    Action<ErrorDescription> OnUnsuccessfulSignUp { get; set; }
 }
 public class SignUpPage :  Page, ISignUp
 {
@@ -27,10 +30,40 @@ public class SignUpPage :  Page, ISignUp
         }
     }
 
+    public Action OnSuccessfulSignUp
+    {
+        get
+        {
+            return onSuccessfulSignUp;
+        }
+
+        set
+        {
+            onSuccessfulSignUp = value;
+        }
+    }
+
+    public Action<ErrorDescription> OnUnsuccessfulSignUp
+    {
+        get
+        {
+            return onUnsuccessfulSignUp;
+        }
+
+        set
+        {
+            onUnsuccessfulSignUp = value;
+        }
+    }
+
+    private Action onSuccessfulSignUp;
+    private Action<ErrorDescription> onUnsuccessfulSignUp;
+
     private void Awake()
     {
         create_Btn.onClick.AddListener(SignUp);
-        showPassword_Toggle.onValueChanged.AddListener((mood) => {
+        showPassword_Toggle.onValueChanged.AddListener((mood) => 
+        {
             password_InputField.contentType = mood ? InputField.ContentType.Password : InputField.ContentType.Standard;
             password_InputField.ForceLabelUpdate();
         });
@@ -41,7 +74,7 @@ public class SignUpPage :  Page, ISignUp
 
     private void ChangeButtonImage(string arg0)
     {
-        if (login_InputField.text != "" && email_InputField.text != "" && password_InputField.text.Length > 5)
+        if (!string.IsNullOrEmpty(login_InputField.text) && !string.IsNullOrEmpty(email_InputField.text) && !string.IsNullOrEmpty(password_InputField.text) && password_InputField.text.Length > 5)
         {
             if (signUp_Image.sprite != enabled_Sprite)
                 signUp_Image.sprite = enabled_Sprite;
@@ -49,46 +82,12 @@ public class SignUpPage :  Page, ISignUp
         else if (signUp_Image.sprite == enabled_Sprite)
             signUp_Image.sprite = disabled_Sprite;
     }
-
-    private void Start()
-    {
-        XsollaAuthentication.Instance.OnSuccessfulRegistration += OnSuccesfulRegistration;
-        XsollaAuthentication.Instance.OnRegistrationNotAllowedException += OnRegistrationNotAllowed;
-        XsollaAuthentication.Instance.OnUsernameIsTaken += OnUsernameIsTaken;
-        XsollaAuthentication.Instance.OnEmailIsTaken += OnEmailIsTaken;
-    }
-
-    private void OnSuccesfulRegistration()
-    {
-        Debug.Log("Succesfully registrated");
-    }
-
-    private void OnEmailIsTaken(ErrorDescription error)
-    {
-        Debug.Log("The email is already taken");
-    }
-
-    private void OnUsernameIsTaken(ErrorDescription error)
-    {
-        Debug.Log("The username is already taken");
-    }
-
-    private void OnRegistrationNotAllowed(ErrorDescription error)
-    {
-        Debug.Log("Password Registration Not Allowed "+error.code+", "+error.description);
-    }
-    private void OnDestroy()
-    {
-        XsollaAuthentication.Instance.OnSuccessfulRegistration -= OnSuccesfulRegistration;
-        XsollaAuthentication.Instance.OnRegistrationNotAllowedException -= OnRegistrationNotAllowed;
-        XsollaAuthentication.Instance.OnUsernameIsTaken -= OnUsernameIsTaken;
-        XsollaAuthentication.Instance.OnEmailIsTaken -= OnEmailIsTaken;
-    }
+    
     public void SignUp()
     {
-        if (login_InputField.text != "" && password_InputField.text.Length >= 6 && email_InputField.text != "")
+        if (!string.IsNullOrEmpty(login_InputField.text) && !string.IsNullOrEmpty(email_InputField.text) && !string.IsNullOrEmpty(password_InputField.text) && password_InputField.text.Length > 5)
         {
-            XsollaAuthentication.Instance.Registration(login_InputField.text, password_InputField.text, email_InputField.text);
+            XsollaAuthentication.Instance.Registration(login_InputField.text, password_InputField.text, email_InputField.text, onSuccessfulSignUp, onUnsuccessfulSignUp);
         }
         else
             Debug.Log("Fill all fields");

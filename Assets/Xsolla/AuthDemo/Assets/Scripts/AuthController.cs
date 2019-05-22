@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -6,7 +7,7 @@ using Xsolla;
 
 public class AuthController : MonoBehaviour
 {
-    [SerializeField] private GameObject changePassword_Panel;
+    [SerializeField] private GameObject resetPassword_Panel;
     [SerializeField] private GameObject loginSignUp_Panel;
     [SerializeField] private GameObject signUp_Panel;
     [SerializeField] private GameObject login_Panel;
@@ -22,12 +23,27 @@ public class AuthController : MonoBehaviour
 
     private void Awake()
     {
+        PagesController();
+        PagesEvents();
+    }
+
+    private void PagesEvents()
+    {
+        signUp_Panel.GetComponent<ISignUp>().OnSuccessfulSignUp = () => OpenPopUp(string.Format("User registration is successful. Check and confirm {0} now!", signUp_Panel.GetComponent<ISignUp>().SignUpEmail), PopUpWindows.Success);
+        signUp_Panel.GetComponent<ISignUp>().OnUnsuccessfulSignUp = OnError;
+        resetPassword_Panel.GetComponent<IResetPassword>().OnUnsuccessfulResetPassword = OnError;
+        login_Panel.GetComponent<ILogin>().OnUnsuccessfulLogin = OnError;
+        login_Panel.GetComponent<ILogin>().OnSuccessfulLogin = (user) => OpenPopUp("User authentication is completed! You can use Auth JWT token now!", PopUpWindows.Success);
+    }
+    
+    private void PagesController()
+    {
         OpenPage(loginSignUp_Panel);
         openLogin_Btn.GetComponent<IPanelVisualElement>().Select();
         OpenPage(login_Panel);
         popUp_Controller.GetComponent<IPopUpController>().OnClosePopUp = OpenSaved;
 
-        var returnToTheMain = new UnityAction(()=>
+        var returnToTheMain = new UnityAction(() =>
         {
             CloseAll();
             OpenPage(loginSignUp_Panel);
@@ -35,8 +51,9 @@ public class AuthController : MonoBehaviour
         });
         closeSuccessChangePassword_Btn.onClick.AddListener(returnToTheMain);
         closeChangePassword_Btn.onClick.AddListener(returnToTheMain);
-        openChangePassw_Btn.onClick.AddListener(() => { CloseAll(); OpenPage(changePassword_Panel); });
-        openSignUp_Btn.onClick.AddListener(() => {
+        openChangePassw_Btn.onClick.AddListener(() => { CloseAll(); OpenPage(resetPassword_Panel); });
+        openSignUp_Btn.onClick.AddListener(() =>
+        {
             CloseAll();
             OpenPage(signUp_Panel);
             OpenPage(loginSignUp_Panel);
@@ -52,6 +69,7 @@ public class AuthController : MonoBehaviour
             openSignUp_Btn.GetComponent<IPanelVisualElement>().Deselect();
         });
     }
+
     private void OpenPage(GameObject page)
     {
         page.GetComponent<IPage>().Open();
@@ -93,8 +111,6 @@ public class AuthController : MonoBehaviour
         {
             Debug.Log("Your token " + XsollaAuthentication.Instance.Token + " is active");
         }
-
-        SubscribeOnXsollaEvents();
     }
 
     private void OpenPopUp(string message, PopUpWindows popUp)
@@ -103,52 +119,52 @@ public class AuthController : MonoBehaviour
         popUp_Controller.GetComponent<IPopUpController>().ShowPopUp(message, popUp);
         Debug.Log(message);
     }
-    
-    private void OnDestroy()
+    private void OnError(ErrorDescription errorDescription)
     {
-        UnsubscribeFromXsollaEvents();
+        switch (errorDescription.error)
+        {
+            case Error.PasswordResetingNotAllowedForProject:
+                OpenPopUp(string.Format("Password Reseting Not Allowed For Project {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.TokenVerificationException:
+                OpenPopUp(string.Format("Token Verification Exception: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.RegistrationNotAllowedException:
+                OpenPopUp(string.Format("Registration Not Allowed Exception: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.UsernameIsTaken:
+                OpenPopUp(string.Format("Username Is Taken: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.EmailIsTaken:
+                OpenPopUp(string.Format("Email Is Taken: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.UserIsNotActivated:
+                OpenPopUp(string.Format("User is not activated: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.CaptchaRequiredException:
+                OpenPopUp(string.Format("Captcha Required Exception: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.InvalidProjectSettings:
+                OpenPopUp(string.Format("OnInvalidProjectSettings: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.InvalidLoginOrPassword:
+                OpenPopUp("Wrong username or password", PopUpWindows.Error);
+                break;
+            case Error.MultipleLoginUrlsException:
+                OpenPopUp(string.Format("OnMultipleLoginUrlsException: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.SubmittedLoginUrlNotFoundException:
+                OpenPopUp(string.Format("SubmittedLoginUrlNotFoundException: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.InvalidToken:
+                OpenPopUp("Invalid Token", PopUpWindows.Error);
+                break;
+            case Error.NetworkError:
+                OpenPopUp(string.Format("Network Error: {0}", errorDescription.description), PopUpWindows.Error);
+                break;
+            case Error.IdentifiedError:
+                OpenPopUp(string.Format("Identified error: {0}, {1}.", errorDescription.code, errorDescription.description), PopUpWindows.Error);
+                break;
+        }
     }
-
-    #region XsollaEvents
-    private void SubscribeOnXsollaEvents()
-    {
-        XsollaAuthentication.Instance.OnSuccessfulRegistration += () => OpenPopUp("User registration is successful. Check and confirm " + signUp_Panel.GetComponent<ISignUp>().SignUpEmail + " now!", PopUpWindows.Success);
-        XsollaAuthentication.Instance.OnSuccessfulSignIn += (user) => OpenPopUp("User authentication is completed! You can use Auth JWT token now!", PopUpWindows.Success);
-        XsollaAuthentication.Instance.OnSuccessfulResetPassword += () => Debug.Log("OnSuccessfulResetPassword");
-        XsollaAuthentication.Instance.OnSuccessfulSignOut += () => OpenPopUp("OnSuccessfulSignOut", PopUpWindows.Success);
-
-        XsollaAuthentication.Instance.OnInvalidLoginOrPassword += (error) => OpenPopUp("Wrong username or password", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnUserIsNotActivated += (obj) => OpenPopUp("User is not activated" + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnPasswordResetingNotAllowedForProject += (obj) => OpenPopUp("Password Reseting Not Allowed For Project " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnCaptchaRequiredException += (obj) => OpenPopUp("Captcha Required Exception: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnRegistrationNotAllowedException += (obj) => OpenPopUp("Registration Not Allowed Exception: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnUsernameIsTaken += (obj) => OpenPopUp("Username Is Taken: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnEmailIsTaken += (obj) => OpenPopUp("Email Is Taken: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error); ;
-        XsollaAuthentication.Instance.OnInvalidProjectSettings += (obj) => OpenPopUp("OnInvalidProjectSettings: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnMultipleLoginUrlsException += (obj) => OpenPopUp("OnMultipleLoginUrlsException: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnSubmittedLoginUrlNotFoundException += (obj) => OpenPopUp("SubmittedLoginUrlNotFoundException: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnIdentifiedError += (obj) => OpenPopUp("Identified error: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnNetworkError += () => OpenPopUp("NETWORK ERROR", PopUpWindows.Error);
-    }
-    private void UnsubscribeFromXsollaEvents()
-    {
-        XsollaAuthentication.Instance.OnSuccessfulRegistration -= () => OpenPopUp("User registration is successful. Check and confirm " + signUp_Panel.GetComponent<ISignUp>().SignUpEmail + " now!", PopUpWindows.Success);
-        XsollaAuthentication.Instance.OnSuccessfulSignIn -= (user) => OpenPopUp("User authentication is completed! You can use Auth JWT token now!", PopUpWindows.Success);
-        XsollaAuthentication.Instance.OnSuccessfulResetPassword -= () => Debug.Log("OnSuccessfulResetPassword");
-        XsollaAuthentication.Instance.OnSuccessfulSignOut -= () => OpenPopUp("OnSuccessfulSignOut", PopUpWindows.Success);
-
-        XsollaAuthentication.Instance.OnInvalidLoginOrPassword -= (error) => OpenPopUp("Wrong username or password", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnUserIsNotActivated -= (obj) => OpenPopUp("User is not activated" + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnPasswordResetingNotAllowedForProject -= (obj) => OpenPopUp("Password Reseting Not Allowed For Project " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnCaptchaRequiredException -= (obj) => OpenPopUp("Captcha Required Exception: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnRegistrationNotAllowedException -= (obj) => OpenPopUp("Registration Not Allowed Exception: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnUsernameIsTaken -= (obj) => OpenPopUp("Username Is Taken: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnEmailIsTaken -= (obj) => OpenPopUp("Email Is Taken: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error); ;
-        XsollaAuthentication.Instance.OnInvalidProjectSettings -= (obj) => OpenPopUp("OnInvalidProjectSettings: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnMultipleLoginUrlsException -= (obj) => OpenPopUp("OnMultipleLoginUrlsException: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnSubmittedLoginUrlNotFoundException -= (obj) => OpenPopUp("SubmittedLoginUrlNotFoundException: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnIdentifiedError -= (obj) => OpenPopUp("Identified error: " + obj.code + ", " + obj.description + ".", PopUpWindows.Error);
-        XsollaAuthentication.Instance.OnNetworkError -= () => OpenPopUp("NETWORK ERROR", PopUpWindows.Error);
-    }
-    #endregion
 }

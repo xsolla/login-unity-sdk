@@ -1,11 +1,13 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using Xsolla;
 
 public interface ILogin
 {
     void Login();
+    Action<XsollaUser> OnSuccessfulLogin { get; set; }
+    Action<ErrorDescription> OnUnsuccessfulLogin { get; set; }
 }
 public class LoginPage : Page, ILogin
 {
@@ -18,6 +20,35 @@ public class LoginPage : Page, ILogin
     [SerializeField] private Image login_Image;
     [SerializeField] private Sprite disabled_Sprite;
     [SerializeField] private Sprite enabled_Sprite;
+
+    public Action<XsollaUser> OnSuccessfulLogin
+    {
+        get
+        {
+            return onSuccessfulLogin;
+        }
+
+        set
+        {
+            onSuccessfulLogin = value;
+        }
+    }
+
+    public Action<ErrorDescription> OnUnsuccessfulLogin
+    {
+        get
+        {
+            return onUnsuccessfulLogin;
+        }
+
+        set
+        {
+            onUnsuccessfulLogin = value;
+        }
+    }
+
+    private Action<XsollaUser> onSuccessfulLogin;
+    private Action<ErrorDescription> onUnsuccessfulLogin;
 
     private void Awake()
     {
@@ -32,7 +63,7 @@ public class LoginPage : Page, ILogin
 
     private void ChangeButtonImage(string arg0)
     {
-        if (login_InputField.text != "" && password_InputField.text.Length > 5)
+        if (!string.IsNullOrEmpty(login_InputField.text) && password_InputField.text.Length > 5)
         {
             if (login_Image.sprite != enabled_Sprite)
                 login_Image.sprite = enabled_Sprite;
@@ -45,46 +76,29 @@ public class LoginPage : Page, ILogin
     {
         login_InputField.text = XsollaAuthentication.Instance.LastUserLogin;
         password_InputField.text = XsollaAuthentication.Instance.LastUserPassword;
-        XsollaAuthentication.Instance.OnSuccessfulSignIn += OnSignIn;
-        XsollaAuthentication.Instance.OnValidToken += OnValidToken;
-        XsollaAuthentication.Instance.OnInvalidToken += OnInvalidToken;
     }
 
-    private void OnInvalidToken()
-    {
-        Debug.Log("Invalid token");
-    }
-
-    private void OnValidToken(string obj)
-    {
-        Debug.Log("Valid token");
-    }
-
-    private void OnSignIn(XsollaUser user)
+    private void OnLogin(XsollaUser user)
     {
         if (XsollaAuthentication.Instance.IsTokenValid && XsollaAuthentication.Instance.IsJWTValidationToken)
         {
-            Debug.Log("Your token " + XsollaAuthentication.Instance.Token + " is active");
+            Debug.Log(string.Format("Your token {0} is active", XsollaAuthentication.Instance.Token));
         }
         else if (!XsollaAuthentication.Instance.IsJWTValidationToken)
         {
             Debug.Log("Unsafe signed in");
         }
+        if (onSuccessfulLogin != null)
+            onSuccessfulLogin.Invoke(user);
     }
 
     public void Login()
     {
-        if (login_InputField.text != "" && password_InputField.text.Length > 5)
+        if (!string.IsNullOrEmpty(login_InputField.text) && password_InputField.text.Length > 5)
         {
-            XsollaAuthentication.Instance.SignIn(login_InputField.text, password_InputField.text, rememberMe_ChkBox.isOn);
+            XsollaAuthentication.Instance.SignIn(login_InputField.text, password_InputField.text, rememberMe_ChkBox.isOn, OnLogin, onUnsuccessfulLogin);
         }
         else
             Debug.Log("Fill all fields");
-    }
-    void OnDestroy()
-    {
-        XsollaAuthentication.Instance.OnSuccessfulSignIn -= OnSignIn;
-        XsollaAuthentication.Instance.OnValidToken -= OnValidToken;
-        XsollaAuthentication.Instance.OnInvalidToken -= OnInvalidToken;
     }
 }

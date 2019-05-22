@@ -783,7 +783,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0336efb24efbb5e459fed2ce972634b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  changePassword_Panel: {fileID: 1577027510}
+  resetPassword_Panel: {fileID: 1577027510}
   loginSignUp_Panel: {fileID: 31036806}
   signUp_Panel: {fileID: 280507623}
   login_Panel: {fileID: 1244510948}
@@ -4685,7 +4685,7 @@ GameObject:
   - component: {fileID: 1359522561}
   - component: {fileID: 1359522562}
   m_Layer: 5
-  m_Name: ChangePasswordSuccess
+  m_Name: ResetPasswordSuccess
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5508,7 +5508,7 @@ GameObject:
   - component: {fileID: 1577027511}
   - component: {fileID: 1577027512}
   m_Layer: 5
-  m_Name: ChangePassword
+  m_Name: ResetPassword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
