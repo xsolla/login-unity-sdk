@@ -237,7 +237,6 @@ namespace Xsolla
                 ));
         }
 
-
         /// <summary>
         /// Registration
         /// </summary>

@@ -1,11 +1,4 @@
 ﻿using UnityEngine;
-using Xsolla;
-
-public interface IPage
-{
-    void Open();
-    void Close();
-}
 public class Page : MonoBehaviour, IPage
 {
     public void Close()
@@ -17,5 +10,4 @@ public class Page : MonoBehaviour, IPage
     {
         gameObject.SetActive(true);
     }
-    
 }

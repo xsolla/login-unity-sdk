@@ -1,11 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-public interface IPanelVisualElement
-{
-    void Select();
-    void Deselect();
-}
+
 public class PanelElementVisualize : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPanelVisualElement
 {
     [SerializeField] private Text text;

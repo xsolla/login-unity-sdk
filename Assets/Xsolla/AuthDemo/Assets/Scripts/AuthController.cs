@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -29,11 +28,12 @@ public class AuthController : MonoBehaviour
 
     private void PagesEvents()
     {
-        signUp_Panel.GetComponent<ISignUp>().OnSuccessfulSignUp = () => OpenPopUp(string.Format("User registration is successful. Check and confirm {0} now!", signUp_Panel.GetComponent<ISignUp>().SignUpEmail), PopUpWindows.Success);
+        signUp_Panel.GetComponent<ISignUp>().OnSuccessfulSignUp = () => OpenPopUp("Account successfully created", string.Format("Please check {0} and confirm your email", signUp_Panel.GetComponent<ISignUp>().SignUpEmail));
         signUp_Panel.GetComponent<ISignUp>().OnUnsuccessfulSignUp = OnError;
+        resetPassword_Panel.GetComponent<IResetPassword>().OnSuccessfulResetPassword = () => OpenPopUp("Password successfully reset", "Please check your email and change the password");
         resetPassword_Panel.GetComponent<IResetPassword>().OnUnsuccessfulResetPassword = OnError;
         login_Panel.GetComponent<ILogin>().OnUnsuccessfulLogin = OnError;
-        login_Panel.GetComponent<ILogin>().OnSuccessfulLogin = (user) => OpenPopUp("User authentication is completed! You can use Auth JWT token now!", PopUpWindows.Success);
+        login_Panel.GetComponent<ILogin>().OnSuccessfulLogin = (user) => OpenPopUp("You have successfully logged in", PopUpWindows.Success);
     }
     
     private void PagesController()
@@ -48,7 +48,10 @@ public class AuthController : MonoBehaviour
             CloseAll();
             OpenPage(loginSignUp_Panel);
             OpenPage(login_Panel);
+            openLogin_Btn.GetComponent<IPanelVisualElement>().Select();
+            openSignUp_Btn.GetComponent<IPanelVisualElement>().Deselect();
         });
+        popUp_Controller.GetComponent<IPopUpController>().OnReturnToLogin = returnToTheMain;
         closeSuccessChangePassword_Btn.onClick.AddListener(returnToTheMain);
         closeChangePassword_Btn.onClick.AddListener(returnToTheMain);
         openChangePassw_Btn.onClick.AddListener(() => { CloseAll(); OpenPage(resetPassword_Panel); });
@@ -102,21 +105,25 @@ public class AuthController : MonoBehaviour
 
     private void Start()
     {
-        if (XsollaAuthentication.Instance.LoginID == "")
+        if (XsollaAuthentication.Instance.LoginID == string.Empty)
         {
             OpenPopUp("Please register Xsolla Publisher Account, and fill the Login ID form.", PopUpWindows.Warning);
             Debug.Log("Please register Xsolla Publisher Account, and fill the Login ID form. For more details read documentation.\nhttps://github.com/xsolla/login-unity-sdk/blob/master/README.md");
         }
         else if (XsollaAuthentication.Instance.IsTokenValid)
-        {
-            Debug.Log("Your token " + XsollaAuthentication.Instance.Token + " is active");
-        }
+            Debug.Log(string.Format("Your token {0} is active", XsollaAuthentication.Instance.Token));
     }
 
     private void OpenPopUp(string message, PopUpWindows popUp)
     {
         CloseAndSave();
         popUp_Controller.GetComponent<IPopUpController>().ShowPopUp(message, popUp);
+        Debug.Log(message);
+    }
+    private void OpenPopUp(string header, string message)
+    {
+        CloseAndSave();
+        popUp_Controller.GetComponent<IPopUpController>().ShowPopUp(header, message);
         Debug.Log(message);
     }
     private void OnError(ErrorDescription errorDescription)

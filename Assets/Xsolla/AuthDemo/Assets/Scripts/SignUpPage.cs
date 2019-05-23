@@ -3,13 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Xsolla;
 
-public interface ISignUp
-{
-    void SignUp();
-    string SignUpEmail { get; }
-    Action OnSuccessfulSignUp { get; set; }
-    Action<ErrorDescription> OnUnsuccessfulSignUp { get; set; }
-}
 public class SignUpPage :  Page, ISignUp
 {
     [SerializeField] private InputField login_InputField;

@@ -3,12 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Xsolla;
 
-public interface ILogin
-{
-    void Login();
-    Action<XsollaUser> OnSuccessfulLogin { get; set; }
-    Action<ErrorDescription> OnUnsuccessfulLogin { get; set; }
-}
 public class LoginPage : Page, ILogin
 {
     [SerializeField] private InputField login_InputField;

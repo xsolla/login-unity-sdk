@@ -2,12 +2,6 @@
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public interface IPopUp
-{
-    void ShowPopUp(string message);
-    UnityAction OnClose { set; }
-}
-
 public class PopUp : Page, IPopUp
 {
     [SerializeField] private Text message_Text;
@@ -21,7 +15,7 @@ public class PopUp : Page, IPopUp
         }
     }
 
-    private void Awake()
+    protected void Awake()
     {
         close_Button.onClick.AddListener(() => Close());
     }
