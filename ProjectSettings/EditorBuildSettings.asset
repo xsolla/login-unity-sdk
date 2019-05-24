@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Xsolla/AuthDemo/Assets/Scenes/Auth.unity
+    path: Assets/Xsolla/AuthDemo/Assets/Scenes/Authorization.unity
     guid: 9783d80efe9040743a89d5a918a67a79
   - enabled: 1
     path: Assets/Xsolla/AuthDemo/Assets/Scenes/Game.unity
