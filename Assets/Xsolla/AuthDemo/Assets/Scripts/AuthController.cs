@@ -107,7 +107,7 @@ public class AuthController : MonoBehaviour
     {
         if (XsollaAuthentication.Instance.LoginID == string.Empty)
         {
-            OpenPopUp("Please register Xsolla Publisher Account, and fill the Login ID form.", PopUpWindows.Warning);
+            OpenPopUp("Xsolla Login settings not completed", PopUpWindows.Warning);
             Debug.Log("Please register Xsolla Publisher Account, and fill the Login ID form. For more details read documentation.\nhttps://github.com/xsolla/login-unity-sdk/blob/master/README.md");
         }
         else if (XsollaAuthentication.Instance.IsTokenValid)
