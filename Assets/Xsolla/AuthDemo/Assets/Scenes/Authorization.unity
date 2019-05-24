@@ -766,7 +766,6 @@ MonoBehaviour:
   openSignUp_Btn: {fileID: 1080695873}
   openLogin_Btn: {fileID: 977013716}
   closeChangePassword_Btn: {fileID: 1316665534}
-  closeSuccessChangePassword_Btn: {fileID: 51124674}
 --- !u!1 &153719162
 GameObject:
   m_ObjectHideFlags: 0
@@ -4836,7 +4835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07994bfe8b0e4adb97d706de5dea48d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
@@ -5997,7 +5996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07994bfe8b0e4adb97d706de5dea48d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 0}
   m_spriteAsset: {fileID: 0}
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
@@ -6208,6 +6207,12 @@ PrefabInstance:
       propertyPath: _callbackURL
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 114447770900048144, guid: 03f3ddcea02ab004dac400fbe4304a84,
+        type: 3}
+      propertyPath: settings
+      value: 
+      objectReference: {fileID: 11400000, guid: 0328ec6318a38ed41bd46cbcec77583c,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 03f3ddcea02ab004dac400fbe4304a84, type: 3}
 --- !u!1 &1530052322
@@ -7034,9 +7039,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: Forgot your password?
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0063ee731a4b2904b8727d1f784a49cb, type: 2}
-  m_sharedMaterial: {fileID: 21850281758605468, guid: 0063ee731a4b2904b8727d1f784a49cb,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9419,7 +9423,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: See documentation
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 0063ee731a4b2904b8727d1f784a49cb, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: 21850281758605468, guid: 0063ee731a4b2904b8727d1f784a49cb,
     type: 2}
   m_fontSharedMaterials: []

@@ -2,9 +2,6 @@
 
 namespace Xsolla
 {
-    // REVIEW Json classes can be moved to separate files as well - its a good practice to have separate files for different classes.
-
-    #region JsonClasses
     [Serializable]
     public struct XsollaUser
     {
@@ -21,5 +18,4 @@ namespace Xsolla
         public string name;
         public bool is_linked;
     }
-#endregion
 }

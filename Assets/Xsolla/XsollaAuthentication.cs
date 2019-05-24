@@ -5,25 +5,13 @@ using System.Text;
 
 namespace Xsolla
 {
-    // REVIEW 
-
-    // Keys for player preferences should be moved to separate class that holds constants ---- Cant do it cause they use constants like login id which was declared here
-    // -- Why we can't encapsulate strings like "Xsolla_Token", "Xsolla_Token_Exp" etc.?
-
-    // What about creating class that manages all request url formatting stuff? --- useless
-
-    // Does it make sense to expose separate actions for all success and error events?
-    // Its quite an overhead to subscribe for all this stuff and easy to miss something.
-    // Instead you can pass two callbacks (actions) to api methods (i.e. SignIn) - onComplete and onError.
-    // This will allow to provide all logic that is required to deal with method call results right in place where it is used.
-    // onError callback will receive ErrorDescription as a parameter and corresponding handler decides what to do with it.
-
-    // Also, ErrorDescription class should be enhanced by introducing enumeration for error types - it is way more convenient than using strings.
-
     public class XsollaAuthentication : MonoSingleton<XsollaAuthentication>
     {
+        #region Constants
+        #endregion
+
         #region ApiHeaders
-        private const string sdk_v = "0.1";
+        private const string sdk_v = "0.2";
         #endregion
         /// <summary>
         /// Required. You can find it in your project settings. See xsolla.com
@@ -64,27 +52,7 @@ namespace Xsolla
                 _JWTValidationURL = value;
             }
         }
-        public string Token
-        {
-            get
-            {
-                return PlayerPrefs.HasKey("Xsolla_Token") ? PlayerPrefs.GetString("Xsolla_Token") : string.Empty;
-            }
-        }
-        public bool IsTokenValid
-        {
-            get
-            {
-                long epochTicks = new DateTime(1970, 1, 1).Ticks;
-                long unixTime = ((DateTime.UtcNow.Ticks - epochTicks) / TimeSpan.TicksPerSecond);
-
-                if (PlayerPrefs.HasKey("Xsolla_Token_Exp") && !string.IsNullOrEmpty(PlayerPrefs.GetString("Xsolla_Token_Exp")))
-                    return long.Parse(PlayerPrefs.GetString("Xsolla_Token_Exp")) >= unixTime;
-                else
-                    return false;
-            }
-        }
-
+       
         public bool IsJWTValidationToken
         {
             get
@@ -113,8 +81,8 @@ namespace Xsolla
         {
             get
             {
-	            if (PlayerPrefs.HasKey("Xsolla_User_Login") && !string.IsNullOrEmpty(_loginId))
-                    return PlayerPrefs.GetString("Xsolla_User_Login");
+	            if (PlayerPrefs.HasKey(XsollaConstants.Prefs_UserLogin) && !string.IsNullOrEmpty(_loginId))
+                    return PlayerPrefs.GetString(XsollaConstants.Prefs_UserLogin);
                 else
                     return string.Empty;
             }
@@ -125,8 +93,8 @@ namespace Xsolla
             {
                 try
                 {
-                    if (PlayerPrefs.HasKey("Xsolla_User_Password") && !string.IsNullOrEmpty(_loginId))
-                        return Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", string.Empty).Substring(0, 16)), PlayerPrefs.GetString("Xsolla_User_Password"));
+                    if (PlayerPrefs.HasKey(XsollaConstants.Prefs_UserPassword) && !string.IsNullOrEmpty(_loginId))
+                        return Crypto.Decrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", string.Empty).Substring(0, 16)), PlayerPrefs.GetString(XsollaConstants.Prefs_UserPassword));
                     else
                         return string.Empty;
                 }
@@ -136,6 +104,7 @@ namespace Xsolla
                 }
             }
         }
+        public XsollaToken TokenInformation = new XsollaToken();
         [SerializeField]
         private string _loginId;
         [SerializeField]
@@ -152,17 +121,17 @@ namespace Xsolla
         /// </summary>
         public void SignOut()
         {
-            if (PlayerPrefs.HasKey("Xsolla_Token"))
-                PlayerPrefs.DeleteKey("Xsolla_Token");
-            if (PlayerPrefs.HasKey("Xsolla_Token_Exp"))
-                PlayerPrefs.DeleteKey("Xsolla_Token_Exp");
+            if (PlayerPrefs.HasKey(XsollaConstants.Prefs_Token))
+                PlayerPrefs.DeleteKey(XsollaConstants.Prefs_Token);
+            if (PlayerPrefs.HasKey(XsollaConstants.Prefs_TokenExp))
+                PlayerPrefs.DeleteKey(XsollaConstants.Prefs_TokenExp);
         }
         private void SaveLoginPassword(string username, string password)
         {
             if (!string.IsNullOrEmpty(_loginId))
             {
-                PlayerPrefs.SetString("Xsolla_User_Login", username);
-                PlayerPrefs.SetString("Xsolla_User_Password", Crypto.Encrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", string.Empty).Substring(0, 16)), password));
+                PlayerPrefs.SetString(XsollaConstants.Prefs_UserLogin, username);
+                PlayerPrefs.SetString(XsollaConstants.Prefs_UserPassword, Crypto.Encrypt(Encoding.ASCII.GetBytes(LoginID.Replace("-", string.Empty).Substring(0, 16)), password));
             }
         }
 
@@ -375,7 +344,7 @@ namespace Xsolla
                     if (error != null)
                     {
                         xsollaUser = JsonUtility.FromJson<TokenJson>(recievedMessage).token_payload;
-                        PlayerPrefs.SetString("Xsolla_Token_Exp", xsollaUser.exp);
+                        PlayerPrefs.SetString(XsollaConstants.Prefs_TokenExp, xsollaUser.exp);
                     }
                     if (onFinishValidate != null)
                         onFinishValidate.Invoke(xsollaUser, error);
@@ -392,7 +361,7 @@ namespace Xsolla
                 match = match.Remove(match.Length - 1);
 
                 var token = match;
-                PlayerPrefs.SetString("Xsolla_Token", token);
+                PlayerPrefs.SetString(XsollaConstants.Prefs_Token, token);
                 return token;
             }
             catch (Exception)

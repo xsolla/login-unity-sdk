@@ -74,9 +74,9 @@ public class LoginPage : Page, ILogin
 
     private void OnLogin(XsollaUser user)
     {
-        if (XsollaAuthentication.Instance.IsTokenValid && XsollaAuthentication.Instance.IsJWTValidationToken)
+        if (XsollaAuthentication.Instance.TokenInformation.IsTokenValid && XsollaAuthentication.Instance.IsJWTValidationToken)
         {
-            Debug.Log(string.Format("Your token {0} is active", XsollaAuthentication.Instance.Token));
+            Debug.Log(string.Format("Your token {0} is active", XsollaAuthentication.Instance.TokenInformation.Token));
         }
         else if (!XsollaAuthentication.Instance.IsJWTValidationToken)
         {

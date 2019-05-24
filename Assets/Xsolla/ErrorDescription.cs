@@ -2,23 +2,6 @@
 
 namespace Xsolla
 {
-    public enum Error
-    {
-        PasswordResetingNotAllowedForProject,
-        TokenVerificationException,
-        RegistrationNotAllowedException,
-        UsernameIsTaken,
-        EmailIsTaken,
-        UserIsNotActivated,
-        CaptchaRequiredException,
-        InvalidProjectSettings,
-        InvalidLoginOrPassword,
-        MultipleLoginUrlsException,
-        SubmittedLoginUrlNotFoundException,
-        InvalidToken,
-        NetworkError,
-        IdentifiedError
-    }
     [Serializable]
     public class ErrorDescription
     {
@@ -30,6 +13,10 @@ namespace Xsolla
             code = _code;
             description = _description;
             error = _error;
+        }
+        public override string ToString()
+        {
+            return string.Format("Code: {0}. Description: {1}", code, error);
         }
     }
 }
