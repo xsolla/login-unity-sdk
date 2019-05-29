@@ -2,9 +2,17 @@
 
 Login Unity SDK is used to integrate [Xsolla Login API](https://developers.xsolla.com/api/v2/login/) methods with apps based on [Unity](https://unity.com/). 
 
-This solution works only for:
+This solution works for:
 * storing user data at Xsolla’s side
 * authentication via email/username and password
+
+Target OS:
+* iOS
+* Android
+* Linux
+* Mac OS
+* Windows 32-bit
+* Windows 64-bit
 
 **Info:** The integration demo is available in the **Assets > Xsolla > AuthDemo** folder. You can use it as an example.
 
@@ -44,12 +52,11 @@ You can complete the following settings using the demo project or your Unity pro
 
 1. [Download the plugin](https://github.com/xsolla/login-unity-sdk).
 2. Unpack the archive.
-3. Add the package to your project in Unity. Open the *XsollaLogin_v0.1.unitypackage* file from the unpacked archive and click **Import**.
+3. Add the package to your project in Unity. Open the *XsollaLogin_v0.2.unitypackage* file from the unpacked archive and click **Import**.
 4. To configure the demo project:
     1. Go to the unpacked archive > **Assets > Xsolla > AuthDemo**.
     2. Open *XsollaAuthentication.prefab* in **Inspector** and fill in the **Login project ID** field. 
     3. Use [JWT validation](#jwt-validation) to make authentication more secure (optional).
-    4. Add **Auth** and **Game** scenes to the build via **File > Build settings** before playing the project. To test your configuration in runtime, use the Unity console. 
 5. To configure your Unity project:
     1. Go to your Unity project > **Assets > Xsolla** and place *XsollaAuthentication.prefab* to the scene.
     2. Open *XsollaAuthentication.prefab* in **Inspector** and fill in the **Login project ID** field. 
@@ -73,14 +80,13 @@ A [JWT](https://jwt.io/introduction/) is generated for each successfully authent
 ```
 $ npm install -g firebase-tools
 ```
-4. Go to the Unity project > **Assets > Xsolla > Server** and unpack the *xsolla-jwt.7z* archive.
-5. Open console, go to the Unity project > **Assets > Xsolla > Server > xsolla-jwt** and run the following command: 
+4. Open console, go to the Unity project > **Assets > Xsolla > TokenVerificator** and run the following command: 
 ```
 $ firebase login
 ```
-6. Specify your Firebase authentication data in a browser.
-7. Go to the Unity project > **Assets > Xsolla > Server > xsolla-jwt**, open the *.firebaserc* file, and check that the Firebase Project ID is correct. **Note:** If you could not find the *.firebaserc* file, set up the display of hidden files on your PC.
-8. Go to the Unity project > **Assets > Xsolla > Server > xsolla-jwt > functions**.
+5. Specify your Firebase authentication data in a browser.
+6. Go to the Unity project > **Assets > Xsolla > TokenVerificator**, open the *.firebaserc* file, and check that the Firebase Project ID is correct. **Note:** If you could not find the *.firebaserc* file, set up the display of hidden files on your PC.
+7. Go to the Unity project > **Assets > Xsolla > TokenVerificator > functions**.
     1. Open the *config.json* file and paste your secret key. You can find it in your **Publisher Account > Login settings > General settings**.  
     2. Install the xsolla-jwt script to the Firebase project:
     ```
@@ -97,7 +103,7 @@ $ firebase login
 Processing of events is already set up in the demo project. You can use and change demo settings in **AuthDemo > Assets > Scripts** or set up your own project’s events. The following scripts are available:
 * *ChangePasswordPage.cs* – changing user password,
 * *CreateAccountPage.cs* – user registration,
-* *SignInPage.cs* – user authentication via the email/username and password.
+* *LoginPage.cs* – user authentication via the email/username and password.
 
 The instructions for setting up an event are given below (here the event is user registration):
 1. Initialize events processing using the following command: 
