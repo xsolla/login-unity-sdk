@@ -341,7 +341,7 @@ namespace Xsolla
                 {
                     ErrorDescription error = CheckForErrors(status, recievedMessage, CheckTokenError);
                     XsollaUser xsollaUser = new XsollaUser();
-                    if (error != null)
+                    if (error == null)
                     {
                         xsollaUser = JsonUtility.FromJson<TokenJson>(recievedMessage).token_payload;
                         PlayerPrefs.SetString(XsollaConstants.Prefs_TokenExp, xsollaUser.exp);
