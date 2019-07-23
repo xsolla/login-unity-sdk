@@ -163,19 +163,21 @@ namespace Xsolla
         /// </summary>
         public void SignIn(string username, string password, bool remember_user, Action<XsollaUser> onSuccessfulSignIn, Action<ErrorDescription> onError)
         {
-            WWWForm form = new WWWForm();
-            form.AddField("username", username);
-            form.AddField("password", password);
-            form.AddField("remember_me", remember_user.ToString());
+	        var loginData = new LoginData();
+            loginData.username = username;
+            loginData.password = password;
+            loginData.remember_me = remember_user;
+
+            var loginDataJson = JsonUtility.ToJson(loginData);
             
             string proxy = _isProxy ? "proxy/" : string.Empty;
 
             StartCoroutine(WebRequests.PostRequest(
                 string.Format("https://login.xsolla.com/api/{0}login?projectId={1}&login_url={2}&engine=unity&engine_v={3}&sdk=login&sdk_v={4}", proxy, _loginId, _callbackURL, Application.unityVersion, sdk_v),
-                form,
+                loginDataJson,
                 (status, message) =>
                 {
-                    ErrorDescription error = CheckForErrors(status, message, CheckSignInError);
+	                ErrorDescription error = CheckForErrors(status, message, CheckSignInError);
                     if (error != null)
                     {
                         if (onError != null)
@@ -211,18 +213,22 @@ namespace Xsolla
         /// </summary>
         public void Registration(string username, string password, string email, Action onSuccessfulRegistration, Action<ErrorDescription> onError)
         {
-            WWWForm registrationForm = new WWWForm();
-            registrationForm.AddField("username", username);
-            registrationForm.AddField("password", password);
-            registrationForm.AddField("email", email);
+	        var signUpData = new SignUpData();
+            signUpData.username = username;
+            signUpData.password = password;
+            signUpData.email = email;
+
+            var signUpDataJson = JsonUtility.ToJson(signUpData);
             
             string proxy = _isProxy ? "proxy/registration" : "user";
 
             StartCoroutine(WebRequests.PostRequest(
                 string.Format("https://login.xsolla.com/api/{0}?projectId={1}&login_url={2}&engine=unity&engine_v={3}&sdk=login&sdk_v={4}", proxy, _loginId, _callbackURL, Application.unityVersion, sdk_v),
-                registrationForm,
+                signUpDataJson,
                 (status, message) =>
                 {
+	                print(message);
+	                
                     ErrorDescription error = CheckForErrors(status, message, CheckRegistrationError);
 
                     if (error == null && onSuccessfulRegistration != null)
@@ -336,6 +342,7 @@ namespace Xsolla
         private void JWTValidation(string message, Action<XsollaUser, ErrorDescription> onFinishValidate = null)
         {
             string token = ParseToken(message);
+            
             if (!string.IsNullOrEmpty(token))
                 ValidateToken(token, (status, recievedMessage) =>
                 {
@@ -354,19 +361,20 @@ namespace Xsolla
         }
         private string ParseToken(string message)
         {
+	        var loginUrl = JsonUtility.FromJson<LoginUrl>(message);
+	        
             Regex regex = new Regex(@"token=\S*[&#]");
             try
             {
-                var match = regex.Match(message).Value.Replace("token=", string.Empty);
+                var match = regex.Match(loginUrl.login_url).Value.Replace("token=", string.Empty);
                 match = match.Remove(match.Length - 1);
-
                 var token = match;
                 PlayerPrefs.SetString(XsollaConstants.Prefs_Token, token);
                 return token;
             }
             catch (Exception)
             {
-                return string.Empty;
+	            return string.Empty;
             }
         }
 
