@@ -18,8 +18,8 @@ namespace Xsolla.Core
 			{
 				new WebRequestHeader("X-ENGINE", "UNITY"),
 				new WebRequestHeader("X-ENGINE-V", Application.unityVersion.ToUpper()),
-				new WebRequestHeader("X-SDK", "STORE"),
-				new WebRequestHeader("X-SDK-V", Constants.StoreSdkVersion)
+				new WebRequestHeader("X-SDK", "LOGIN"),
+				new WebRequestHeader("X-SDK-V", Constants.LOGIN_SDK_VERSION)
 			};
 		}
 

@@ -11,7 +11,7 @@ namespace Xsolla.Login
 	{
 		public event Action TokenChanged;
 		
-		private string AdditionalUrlParams => $"&engine=unity&engine_v={Application.unityVersion}&sdk=login&sdk_v={Constants.LoginSdkVersion}";
+		private string AdditionalUrlParams => $"&engine=unity&engine_v={Application.unityVersion}&sdk=login&sdk_v={Constants.LOGIN_SDK_VERSION}";
 
 		private byte[] CryptoKey => Encoding.ASCII.GetBytes(XsollaSettings.LoginId.Replace("-", string.Empty).Substring(0, 16));
 
