@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define LoginDemo
+using System;
 using UnityEngine;
 using Xsolla.Core;
 using Xsolla.Core.Popup;
@@ -74,6 +75,9 @@ public class AccountLinkingManager : MonoBehaviour
 	private void ApplyNewToken(string newToken)
 	{
 		DemoController.Instance.GetImplementation().Token = newToken;
+#if LoginDemo
+		FindObjectOfType<UserInfoDrawer>()?.Refresh();
+#elif StoreDemo
 		DemoController.Instance.SetState(MenuState.Main);
 		UserInventory.Instance.Refresh(onSuccess: GoToInventory, onError: StoreDemoPopup.ShowError);
 	}
@@ -81,6 +85,7 @@ public class AccountLinkingManager : MonoBehaviour
 	private void GoToInventory()
 	{
 		DemoController.Instance.SetState(MenuState.Inventory);
+#endif
 	}
 
 	private void ShowCodeConfirmation(Action<string> callback)
