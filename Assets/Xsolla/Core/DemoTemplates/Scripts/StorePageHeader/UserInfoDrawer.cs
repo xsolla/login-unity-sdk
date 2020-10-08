@@ -25,6 +25,13 @@ public class UserInfoDrawer : MonoBehaviour
 	    }, _ => busy = false);
 	    
 	    yield return new WaitWhile(() => busy);
-	    Destroy(this, 0.1F);
-    }
+		//Destroy(this, 0.1F);
+		this.gameObject.SetActive(false);
+		this.gameObject.SetActive(true);
+	}
+
+	public void Refresh()
+	{
+		StartCoroutine(Start());
+	}
 }
