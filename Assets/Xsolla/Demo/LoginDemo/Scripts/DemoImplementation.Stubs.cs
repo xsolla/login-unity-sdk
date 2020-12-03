@@ -25,6 +25,11 @@ public partial class DemoImplementation : MonoBehaviour, IDemoImplementation
 		onSuccess?.Invoke(new List<CatalogSubscriptionItemModel>());
 	}
 
+	public void GetCatalogBundles(Action<List<CatalogBundleItemModel>> onSuccess, Action<Error> onError = null)
+	{
+		onSuccess?.Invoke(new List<CatalogBundleItemModel>());
+	}
+
 	public List<string> GetCatalogGroupsByItem(ItemModel item)
 	{
 		return new List<string>();
@@ -45,6 +50,11 @@ public partial class DemoImplementation : MonoBehaviour, IDemoImplementation
 		onSuccess?.Invoke(new List<UserSubscriptionModel>());
 	}
 
+	public void ConsumeVirtualCurrency(InventoryItemModel currency, uint count, Action onSuccess, Action onFailed = null)
+	{
+		onSuccess?.Invoke();
+	}
+
 	public void ConsumeInventoryItem(InventoryItemModel item, uint count, Action<InventoryItemModel> onSuccess, Action<InventoryItemModel> onFailed = null)
 	{
 		onSuccess?.Invoke(item);
@@ -63,5 +73,15 @@ public partial class DemoImplementation : MonoBehaviour, IDemoImplementation
 	public void PurchaseCart(List<UserCartItem> items, Action<List<UserCartItem>> onSuccess, Action<Error> onError = null)
 	{
 		onSuccess?.Invoke(items);
+	}
+
+	public Token GetDemoUserToken()
+	{
+		return new Token();
+	}
+
+	public void RedeemCouponCode(string couponCode, Action<List<CouponRedeemedItemModel>> onSuccess, Action<Error> onError)
+	{
+		onSuccess?.Invoke(new List<CouponRedeemedItemModel>());
 	}
 }

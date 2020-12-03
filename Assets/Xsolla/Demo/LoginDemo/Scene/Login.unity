@@ -400,7 +400,8 @@ PrefabInstance:
         type: 3}
       propertyPath: buyCurrencyMenuPrefab
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 5920836100163376800, guid: 15e31fa00847745c09f431c2fac9e3b3,
+        type: 3}
     - target: {fileID: 6389733742317925048, guid: 4af1ad141a08941d8bc07459eb260991,
         type: 3}
       propertyPath: authMenuPrefab
@@ -463,19 +464,16 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 6389733742317925048, guid: 4af1ad141a08941d8bc07459eb260991,
         type: 3}
-      propertyPath: storeMenuPrefab
+      propertyPath: characterMenuPrefab
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 6843898244374627520, guid: 154f4dc4039983f45b87cd72621eb453,
+        type: 3}
     - target: {fileID: 6389733742317925048, guid: 4af1ad141a08941d8bc07459eb260991,
         type: 3}
-      propertyPath: cartMenuPrefab
+      propertyPath: socialFriendsMenuPrefab
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6389733742317925048, guid: 4af1ad141a08941d8bc07459eb260991,
+      objectReference: {fileID: 7106663182902892708, guid: 1281d98bd7bc8e08f80b46c1624d9509,
         type: 3}
-      propertyPath: inventoryMenuPrefab
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6389733742678192272, guid: 4af1ad141a08941d8bc07459eb260991,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -530,6 +528,14 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1218190968, guid: 4af1ad141a08941d8bc07459eb260991, type: 3}
+      propertyPath: Urls.Array.data[0]
+      value: https://developers.xsolla.com/sdk/unity/use-xsolla-servers/
+      objectReference: {fileID: 0}
+    - target: {fileID: 1218190968, guid: 4af1ad141a08941d8bc07459eb260991, type: 3}
+      propertyPath: Urls.Array.data[3]
+      value: https://developers.xsolla.com/doc/pay-station/references/test-cards/#pay_station_references_test_cards
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4af1ad141a08941d8bc07459eb260991, type: 3}

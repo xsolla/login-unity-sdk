@@ -14,7 +14,7 @@ public class CommonStoreMenuController : BaseMenuController
 		AttachUrlToButton(documentationButton, DemoController.Instance.UrlContainer.GetUrl(UrlType.DocumentationUrl));
 		AttachUrlToButton(testCardsButton, DemoController.Instance.UrlContainer.GetUrl(UrlType.TestCardsUrl));
 		AttachButtonCallback(backButton, () => DemoController.Instance.SetPreviousState());
-		AttachButtonCallback(buyCurrencyButton, 
+		AttachButtonCallback(buyCurrencyButton,
 			() => SetMenuState(MenuState.BuyCurrency, () => UserCatalog.Instance.IsUpdated));
 	}
 }

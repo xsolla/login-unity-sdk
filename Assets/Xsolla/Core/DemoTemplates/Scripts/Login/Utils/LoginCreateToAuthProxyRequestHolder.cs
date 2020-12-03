@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-public class LoginCreateToAuthProxyRequestHolder : MonoBehaviour
+public class LoginProxyActionHolder : MonoBehaviour
 {
-	public Action<LoginPageEnterController, object> ProxyRequest { get; set; }
-	public object ProxyArgument { get; set; }
+	public Action<LoginPageEnterController, object> ProxyAction { get; set; }
+	public object ProxyActionArgument { get; set; }
 }
