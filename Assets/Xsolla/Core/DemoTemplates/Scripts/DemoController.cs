@@ -11,7 +11,7 @@ public class DemoController : MonoSingleton<DemoController>, IMenuStateMachine
 
 	private IDemoImplementation _demoImplementation;
 
-	public UrlContainer UrlContainer => _urlContainer;
+    public UrlContainer UrlContainer => _urlContainer;
 
     public event MenuStateMachine.StateChangeDelegate StateChangingEvent
     {
@@ -122,5 +122,10 @@ public class DemoController : MonoSingleton<DemoController>, IMenuStateMachine
     {
         if (stateMachine != null)
             stateMachine.SetPreviousState();
+    }
+
+    public bool IsStateAvailable(MenuState state)
+    {
+        return stateMachine.IsStateAvailable(state);
     }
 }
