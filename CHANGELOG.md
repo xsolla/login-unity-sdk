@@ -1,4 +1,18 @@
 # Changelog
+## [0.6.4.0] - 2021-03-31
+### Added
+- Battle Pass
+- UI Builder
+- XboxOne/PS4 support
+- Redirect policy settings
+- Logging level settings
+- API method for resend account confirmation email
+### Fixed
+ - Payment status polling
+ - AppleID authorization
+### Changed
+- PayStation Widget version
+
 ## [0.6.3.4] - 2021-03-18
 ### Changed
 - Minor update
@@ -45,8 +59,3 @@
 
 ### Added 
 - Friends system functionality.
-
-
-
-
-
