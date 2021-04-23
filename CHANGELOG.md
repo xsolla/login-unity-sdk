@@ -1,4 +1,10 @@
 # Changelog
+## [0.6.4.2] - 2021-04-23
+### Added
+- Added android QQ auth
+### Fixed
+- Minor fixes
+
 ## [0.6.4.0] - 2021-03-31
 ### Added
 - Battle Pass
