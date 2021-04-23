@@ -20,7 +20,8 @@ namespace Xsolla.Core
 				out int OAuthClientId,
 				out string facebookAppId,
 				out string googleServerId,
-				out string wechatAppId);
+				out string wechatAppId,
+				out string qqAppId);
 
 			_androidHelper = new AndroidHelper();
 			_invalidationFlag = invalidationFlag;
@@ -30,14 +31,14 @@ namespace Xsolla.Core
 				var xlogin = new AndroidJavaClass("com.xsolla.android.login.XLogin");
 				var context = _androidHelper.ApplicationContext;
 
-				var socialConfig = new AndroidJavaObject("com.xsolla.android.login.XLogin$SocialConfig", facebookAppId, googleServerId, wechatAppId);
+				var socialConfig = new AndroidJavaObject("com.xsolla.android.login.XLogin$SocialConfig", facebookAppId, googleServerId, wechatAppId, qqAppId);
 
 				AndroidJavaObject loginConfig;
 				AndroidJavaObject loginConfigBuilder;
 
 				loginConfigBuilder = authorizationType == AuthorizationType.JWT
 					? new AndroidJavaObject("com.xsolla.android.login.LoginConfig$JwtBuilder")
-					: new AndroidJavaObject("com.xsolla.android.login.OauthBuilder");
+					: new AndroidJavaObject("com.xsolla.android.login.LoginConfig$OauthBuilder");
 
 				loginConfigBuilder.Call<AndroidJavaObject>("setProjectId", loginID);
 				loginConfigBuilder.Call<AndroidJavaObject>("setSocialConfig", socialConfig);
@@ -146,7 +147,7 @@ namespace Xsolla.Core
 			}
 		}
 
-		private void GetXsollaSettings(out string loginID, out string callbackURL, out AuthorizationType authorizationType, out bool invalidationFlag, out int OAuthClientId, out string facebookAppId, out string googleServerId, out string wechatAppId)
+		private void GetXsollaSettings(out string loginID, out string callbackURL, out AuthorizationType authorizationType, out bool invalidationFlag, out int OAuthClientId, out string facebookAppId, out string googleServerId, out string wechatAppId, out string qqAppId)
 		{
 			loginID = XsollaSettings.LoginId;
 			callbackURL = XsollaSettings.CallbackUrl;
@@ -161,6 +162,7 @@ namespace Xsolla.Core
 			facebookAppId = XsollaSettings.FacebookAppId;
 			googleServerId = XsollaSettings.GoogleServerId;
 			wechatAppId = XsollaSettings.WeChatAppId;
+			qqAppId = XsollaSettings.QQAppId;
 		}
 
 		public void Dispose()

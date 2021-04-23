@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6389733742678192287}
   - component: {fileID: 1218190968}
   - component: {fileID: 812151294674414048}
+  - component: {fileID: 1502699471}
   m_Layer: 0
   m_Name: DemoController
   m_TagString: Untagged
@@ -82,6 +83,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4deb5d7469340709400c19fceadbc0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1502699471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6389733742678192273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f03b2f51f9eefdd45b3ec35c7c117705, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tutorialInfo: {fileID: 0}
 --- !u!1001 &863570254387835792
 PrefabInstance:
   m_ObjectHideFlags: 0

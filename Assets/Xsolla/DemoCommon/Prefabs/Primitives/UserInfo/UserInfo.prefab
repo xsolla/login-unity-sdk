@@ -285,7 +285,7 @@ GameObject:
   - component: {fileID: 1300874402155048982}
   - component: {fileID: 73172061767297127}
   - component: {fileID: 1650451076201838322}
-  - component: {fileID: 6850706654695751694}
+  - component: {fileID: 7186344625927973563}
   m_Layer: 5
   m_Name: UserInfo
   m_TagString: Untagged
@@ -354,7 +354,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UserAvatarHolder: {fileID: 2125021571591459228}
   AvatarPlaceholder: {fileID: 21300000, guid: f6f5c95a446914c49a37ad659da2c650, type: 3}
---- !u!114 &6850706654695751694
+--- !u!114 &7186344625927973563
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

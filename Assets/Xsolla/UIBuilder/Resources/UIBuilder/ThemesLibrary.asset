@@ -369,16 +369,16 @@ MonoBehaviour:
       _color: {r: 0.18823531, g: 0.26666668, b: 0.30588236, a: 1}
     - _name: Common Text
       _id: a888e9eb-55a8-4cb6-95f2-87c223ebc893
-      _color: {r: 1, g: 1, b: 1, a: 1}
+      _color: {r: 0.9672036, g: 0.9882756, b: 0.990566, a: 1}
     - _name: Description Text
       _id: f082ce88-2612-4821-9daa-8d421f912d8e
-      _color: {r: 1, g: 1, b: 1, a: 0.5019608}
+      _color: {r: 0.9686275, g: 0.98823535, b: 0.9921569, a: 0.5019608}
     - _name: Main Button
       _id: e9c672ce-cad6-4ddf-8fe4-20b3b665f12e
       _color: {r: 0.8490566, g: 0.57759565, b: 0.17221431, a: 1}
     - _name: Main Button Hover
       _id: 81ac4dd1-5977-48bb-bf5a-922ec5905155
-      _color: {r: 0.7372549, g: 0.21176472, b: 0.23529413, a: 1}
+      _color: {r: 0.735849, g: 0.21173012, b: 0.23683752, a: 1}
     - _name: Main Button Disabled
       _id: 111a067e-8ef9-4732-ab9b-3197ae1e3c75
       _color: {r: 0.7372549, g: 0.21176472, b: 0.23529413, a: 0.5019608}
