@@ -1,4 +1,17 @@
 # Changelog
+## [0.6.4.3] - 2021-06-10
+### Added
+- Device ID authorization
+- OAuth2.0 state parameter for more API methods
+- Added: Xsolla assembly definitions
+### Fixed
+- Fixed: In-game browser scroll
+- Fixed: In-game browser numpad
+- Fixed: In-game browser redirection links
+- Fixed: Various other fixes and improvements
+### Removed
+- Removed: Several surplus libraries (reworked corresponding functionality to use custom logic)
+
 ## [0.6.4.2] - 2021-04-23
 ### Added
 - Added android QQ auth
