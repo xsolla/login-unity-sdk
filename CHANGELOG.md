@@ -1,4 +1,16 @@
 # Changelog
+## [0.7.1] - 2021-12-03
+### Added
+- Passwordless auth via email
+- Passwordless auth via SMS
+- Auth via FaceID/TouchID for iOS builds
+- 'Resend confirmation email' button
+### Fixed
+- Other fixes and improvements
+### Changed
+- Updated packages and dependencies
+- Improved social networks auth for iOS builds
+
 ## [0.7.0] - 2021-09-17
 ### Fixed
 - Various fixes and improvements
