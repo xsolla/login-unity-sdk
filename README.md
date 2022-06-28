@@ -1,3 +1,7 @@
+**THIS SDK IS DEPRECATED.**
+
+You can continue to use it, but it will not be updated and supplemented with new features. It is recommended to [switch to the Game Commerce](https://developers.xsolla.com/sdk/unity-deprecated/how-to-switch-to-commerce/). It contains all the classes and methods needed to work with Xsolla products.
+
 # Login & Account System asset for Unity
 
 Integrate the Login & Account System asset into your application to manage user access, connect them via the friend system, and use other features of [Xsolla Login](https://developers.xsolla.com/doc/login/).
@@ -258,10 +262,6 @@ Xsolla offers the necessary tools to help you build and grow your gaming busines
 ### License
 
 See the [LICENSE](https://github.com/xsolla/login-unity-sdk/blob/master/LICENSE.txt) file.
-
-### Community
-
-[Join our Discord server](https://discord.gg/auNFyzZx96) and connect with the Xsolla team and developers who use Xsolla products.
 
 ### Additional resources
 
